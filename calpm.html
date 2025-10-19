@@ -3093,7 +3093,7 @@ vertical-align: -.125em;
   <li><a href="#dane" id="toc-dane" class="nav-link" data-scroll-target="#dane"><span class="header-section-number">2</span> Dane</a>
   <ul class="collapse">
   <li><a href="#opis-danych-znajdujących-się-w-zbiorze" id="toc-opis-danych-znajdujących-się-w-zbiorze" class="nav-link" data-scroll-target="#opis-danych-znajdujących-się-w-zbiorze"><span class="header-section-number">2.1</span> Opis danych znajdujących się w zbiorze</a></li>
-  <li><a href="#weryfikacja-i-przygotowanie-danych-do-analizy" id="toc-weryfikacja-i-przygotowanie-danych-do-analizy" class="nav-link" data-scroll-target="#weryfikacja-i-przygotowanie-danych-do-analizy"><span class="header-section-number">2.2</span> Weryfikacja i przygotowanie danych do analizy</a></li>
+  <li><a href="#zbiór-weryfikacyjny-i-przygotowanie-danych-do-analizy" id="toc-zbiór-weryfikacyjny-i-przygotowanie-danych-do-analizy" class="nav-link" data-scroll-target="#zbiór-weryfikacyjny-i-przygotowanie-danych-do-analizy"><span class="header-section-number">2.2</span> Zbiór weryfikacyjny i przygotowanie danych do analizy</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -3156,109 +3156,12 @@ vertical-align: -.125em;
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;dane/ops.RData&quot;</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div class="cell">
-<details open class="code-fold">
-<summary>Show and hide code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>      date                       grimm_pm10        ops_pm10      
- Min.   :2022-01-21 11:00:00   Min.   :  2.90   Min.   :  1.624  
- 1st Qu.:2022-01-30 22:00:00   1st Qu.: 16.10   1st Qu.:  8.325  
- Median :2022-02-09 09:00:00   Median : 30.80   Median : 15.886  
- Mean   :2022-02-09 09:00:00   Mean   : 41.45   Mean   : 23.470  
- 3rd Qu.:2022-02-18 20:00:00   3rd Qu.: 58.80   3rd Qu.: 31.719  
- Max.   :2022-02-28 07:00:00   Max.   :215.40   Max.   :138.401  
-                               NA&#39;s   :2                         
-     n_0044            n_0075             n_0100             n_0120       
- Min.   :  4.178   Min.   :  0.7276   Min.   : 0.08575   Min.   :0.01945  
- 1st Qu.: 24.951   1st Qu.:  5.9858   1st Qu.: 0.82251   1st Qu.:0.16920  
- Median : 58.342   Median : 11.6249   Median : 1.36116   Median :0.29624  
- Mean   :101.559   Mean   : 21.2231   Mean   : 1.87321   Mean   :0.36823  
- 3rd Qu.:132.261   3rd Qu.: 25.8639   3rd Qu.: 2.33044   3rd Qu.:0.47980  
- Max.   :765.292   Max.   :215.5690   Max.   :14.40541   Max.   :2.05866  
-                                                                          
-     n_0140            n_0200            n_0250             n_0500       
- Min.   :0.01415   Min.   :0.03216   Min.   :0.009057   Min.   :0.01447  
- 1st Qu.:0.10708   1st Qu.:0.22415   1st Qu.:0.046385   1st Qu.:0.05843  
- Median :0.18308   Median :0.37127   Median :0.087110   Median :0.13847  
- Mean   :0.21844   Mean   :0.45922   Mean   :0.128823   Mean   :0.23035  
- 3rd Qu.:0.27291   3rd Qu.:0.57998   3rd Qu.:0.167681   3rd Qu.:0.29201  
- Max.   :1.12680   Max.   :1.99174   Max.   :0.807703   Max.   :1.71827  
-                                                                         
-     n_0750              n_1000               temp              rh       
- Min.   :0.0006842   Min.   :0.0002004   Min.   :-7.650   Min.   :19.32  
- 1st Qu.:0.0057798   1st Qu.:0.0021015   1st Qu.: 1.460   1st Qu.:53.53  
- Median :0.0160075   Median :0.0054993   Median : 3.188   Median :62.07  
- Mean   :0.0302448   Mean   :0.0109251   Mean   : 3.603   Mean   :60.47  
- 3rd Qu.:0.0388154   3rd Qu.:0.0138654   3rd Qu.: 5.773   3rd Qu.:70.16  
- Max.   :0.2584242   Max.   :0.0975555   Max.   :13.985   Max.   :80.52  
-                                         NA&#39;s   :48       NA&#39;s   :48     
-      pres           pres_sea            wd             mws       
- Min.   : 962.0   Min.   : 986.1   Min.   :  1.0   Min.   : 0.60  
- 1st Qu.: 982.5   1st Qu.:1007.6   1st Qu.:246.0   1st Qu.: 2.50  
- Median : 988.7   Median :1014.2   Median :262.0   Median : 4.10  
- Mean   : 988.9   Mean   :1014.3   Mean   :251.8   Mean   : 4.32  
- 3rd Qu.: 996.3   3rd Qu.:1022.1   3rd Qu.:280.0   3rd Qu.: 5.70  
- Max.   :1008.5   Max.   :1035.2   Max.   :359.0   Max.   :13.70  
- NA&#39;s   :48       NA&#39;s   :48       NA&#39;s   :48      NA&#39;s   :48     
-       ws              prec        
- Min.   :0.3433   Min.   :0.00000  
- 1st Qu.:1.2300   1st Qu.:0.00000  
- Median :2.2900   Median :0.00000  
- Mean   :2.4280   Mean   :0.02365  
- 3rd Qu.:3.2567   3rd Qu.:0.00000  
- Max.   :7.2967   Max.   :6.16333  
- NA&#39;s   :48       NA&#39;s   :48       </code></pre>
-</div>
-<details open class="code-fold">
-<summary>Show and hide code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">is.na</span>() <span class="sc">|&gt;</span> <span class="fu">colSums</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>      date grimm_pm10   ops_pm10     n_0044     n_0075     n_0100     n_0120 
-         0          2          0          0          0          0          0 
-    n_0140     n_0200     n_0250     n_0500     n_0750     n_1000       temp 
-         0          0          0          0          0          0         48 
-        rh       pres   pres_sea         wd        mws         ws       prec 
-        48         48         48         48         48         48         48 </code></pre>
-</div>
-<details open class="code-fold">
-<summary>Show and hide code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 909
-Columns: 21
-$ date       &lt;dttm&gt; 2022-01-21 11:00:00, 2022-01-21 12:00:00, 2022-01-21 13:00…
-$ grimm_pm10 &lt;dbl&gt; 19.4, 12.6, 14.2, 20.3, 13.9, 14.3, 18.1, 22.6, 23.4, 21.9,…
-$ ops_pm10   &lt;dbl&gt; 14.745257, 11.785852, 12.404235, 10.295859, 8.731087, 11.21…
-$ n_0044     &lt;dbl&gt; 57.314870, 30.484567, 29.523096, 34.837081, 32.161610, 42.7…
-$ n_0075     &lt;dbl&gt; 13.583416, 7.921950, 7.318594, 8.273678, 7.905023, 9.997945…
-$ n_0100     &lt;dbl&gt; 1.7221058, 1.2214095, 1.0971070, 1.1286867, 1.0181630, 1.12…
-$ n_0120     &lt;dbl&gt; 0.3620380, 0.2946828, 0.2770578, 0.2829772, 0.2481288, 0.26…
-$ n_0140     &lt;dbl&gt; 0.22770538, 0.19178343, 0.17779177, 0.17846372, 0.15712291,…
-$ n_0200     &lt;dbl&gt; 0.4588658, 0.4203183, 0.4098838, 0.3929689, 0.3423779, 0.33…
-$ n_0250     &lt;dbl&gt; 0.09386431, 0.09209425, 0.09982402, 0.07900083, 0.06974166,…
-$ n_0500     &lt;dbl&gt; 0.13998488, 0.12950709, 0.14115179, 0.10639199, 0.08824277,…
-$ n_0750     &lt;dbl&gt; 0.015905973, 0.013818738, 0.014947178, 0.011131220, 0.00803…
-$ n_1000     &lt;dbl&gt; 0.0062776549, 0.0046246872, 0.0053611343, 0.0035743675, 0.0…
-$ temp       &lt;dbl&gt; -1.341667, -1.626667, -1.960000, -2.001667, -1.488333, -2.1…
-$ rh         &lt;dbl&gt; 67.05167, 67.97667, 67.01333, 65.09667, 55.92667, 63.81500,…
-$ pres       &lt;dbl&gt; 990.2600, 990.1100, 990.1800, 990.4000, 990.3817, 990.6700,…
-$ pres_sea   &lt;dbl&gt; 1016.172, 1016.088, 1016.177, 1016.400, 1016.337, 1016.670,…
-$ wd         &lt;dbl&gt; 273, 281, 284, 288, 290, 262, 273, 259, 265, 257, 273, 277,…
-$ mws        &lt;dbl&gt; 6.5, 6.5, 6.2, 5.7, 6.4, 4.7, 4.4, 4.7, 3.6, 4.5, 4.3, 4.5,…
-$ ws         &lt;dbl&gt; 3.345000, 3.996667, 3.781667, 3.311667, 3.708333, 2.583333,…
-$ prec       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NaN, NaN, NaN, NaN, NaN…</code></pre>
-</div>
-</div>
 <section id="opis-danych-znajdujących-się-w-zbiorze" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="opis-danych-znajdujących-się-w-zbiorze"><span class="header-section-number">2.1</span> Opis danych znajdujących się w zbiorze</h2>
 <div class="cell">
 <details open class="code-fold">
 <summary>Show and hide code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 909
@@ -3286,7 +3189,7 @@ $ ws         &lt;dbl&gt; 3.345000, 3.996667, 3.781667, 3.311667, 3.708333, 2.583
 $ prec       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NaN, NaN, NaN, NaN, NaN…</code></pre>
 </div>
 </div>
-<p>Zestaw składa się z 21 zmiennych oraz 869 obserwacji. Objaśnienie każdej z nich:</p>
+<p>Zestaw składa się z 21 zmiennych oraz 909 obserwacji. Objaśnienie każdej z nich:</p>
 <ul>
 <li><code>date</code> - Data (krok 1 godzina)</li>
 <li><code>grimm_pm10</code> - Średnie 1-godzinne stężenia PM10 zmierzone za pomocą GRIMM EDM 180</li>
@@ -3310,28 +3213,166 @@ $ prec       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NaN, NaN, NaN, NaN,
 <li><code>ws</code> - prędkość wiatru [m/s]</li>
 <li><code>prec</code> - opad atmosferyczny [mm/h]</li>
 </ul>
-</section>
-<section id="weryfikacja-i-przygotowanie-danych-do-analizy" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="weryfikacja-i-przygotowanie-danych-do-analizy"><span class="header-section-number">2.2</span> Weryfikacja i przygotowanie danych do analizy</h2>
 <div class="cell">
 <details open class="code-fold">
 <summary>Show and hide code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;dane/ops.RData&quot;</span>) ; ops <span class="ot">&lt;-</span> ops <span class="sc">|&gt;</span> <span class="fu">na.omit</span>()</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;dane/data_test.rdata&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">is.na</span>() <span class="sc">|&gt;</span> <span class="fu">colSums</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      date grimm_pm10   ops_pm10     n_0044     n_0075     n_0100     n_0120 
+         0          2          0          0          0          0          0 
+    n_0140     n_0200     n_0250     n_0500     n_0750     n_1000       temp 
+         0          0          0          0          0          0         48 
+        rh       pres   pres_sea         wd        mws         ws       prec 
+        48         48         48         48         48         48         48 </code></pre>
+</div>
+</div>
+<p>W zbiorze można zaobserwować liczne braki danych, które należy wyelminować przed dalszą analizą.</p>
+<div class="cell">
+<details open class="code-fold">
+<summary>Show and hide code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ops <span class="ot">&lt;-</span> ops <span class="sc">|&gt;</span> <span class="fu">na.omit</span>()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">is.na</span>() <span class="sc">|&gt;</span> <span class="fu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<p>Wszystkie braki danych zosatały usunięte.</p>
+<div class="cell">
+<details open class="code-fold">
+<summary>Show and hide code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      date                         grimm_pm10        ops_pm10      
+ Min.   :2022-01-21 11:00:00.0   Min.   :  2.90   Min.   :  1.624  
+ 1st Qu.:2022-02-01 11:30:00.0   1st Qu.: 16.05   1st Qu.:  7.913  
+ Median :2022-02-10 10:00:00.0   Median : 32.00   Median : 16.310  
+ Mean   :2022-02-10 08:51:32.9   Mean   : 42.24   Mean   : 23.888  
+ 3rd Qu.:2022-02-19 08:30:00.0   3rd Qu.: 60.40   3rd Qu.: 32.559  
+ Max.   :2022-02-28 07:00:00.0   Max.   :215.40   Max.   :138.401  
+     n_0044            n_0075             n_0100             n_0120       
+ Min.   :  4.178   Min.   :  0.7276   Min.   : 0.08575   Min.   :0.01945  
+ 1st Qu.: 24.237   1st Qu.:  5.8932   1st Qu.: 0.79841   1st Qu.:0.16747  
+ Median : 55.757   Median : 11.0323   Median : 1.31703   Median :0.29303  
+ Mean   :101.460   Mean   : 21.1516   Mean   : 1.86505   Mean   :0.36645  
+ 3rd Qu.:133.716   3rd Qu.: 24.9082   3rd Qu.: 2.32868   3rd Qu.:0.48849  
+ Max.   :765.292   Max.   :215.5690   Max.   :14.40541   Max.   :2.05866  
+     n_0140            n_0200            n_0250             n_0500       
+ Min.   :0.01415   Min.   :0.03216   Min.   :0.009057   Min.   :0.01447  
+ 1st Qu.:0.10478   1st Qu.:0.21615   1st Qu.:0.045889   1st Qu.:0.06229  
+ Median :0.18307   Median :0.38556   Median :0.090510   Median :0.14289  
+ Mean   :0.21861   Mean   :0.46225   Mean   :0.131563   Mean   :0.23658  
+ 3rd Qu.:0.27744   3rd Qu.:0.58813   3rd Qu.:0.173393   3rd Qu.:0.29847  
+ Max.   :1.12680   Max.   :1.99174   Max.   :0.807703   Max.   :1.71827  
+     n_0750              n_1000               temp              rh       
+ Min.   :0.0006842   Min.   :0.0002004   Min.   :-7.650   Min.   :19.32  
+ 1st Qu.:0.0063144   1st Qu.:0.0022873   1st Qu.: 1.462   1st Qu.:53.52  
+ Median :0.0167398   Median :0.0058276   Median : 3.190   Median :62.06  
+ Mean   :0.0310844   Mean   :0.0112202   Mean   : 3.609   Mean   :60.46  
+ 3rd Qu.:0.0393332   3rd Qu.:0.0139448   3rd Qu.: 5.791   3rd Qu.:70.18  
+ Max.   :0.2584242   Max.   :0.0975555   Max.   :13.985   Max.   :80.52  
+      pres           pres_sea            wd             mws        
+ Min.   : 962.0   Min.   : 986.1   Min.   :  1.0   Min.   : 0.600  
+ 1st Qu.: 982.6   1st Qu.:1007.6   1st Qu.:246.0   1st Qu.: 2.500  
+ Median : 988.7   Median :1014.3   Median :262.0   Median : 4.100  
+ Mean   : 988.9   Mean   :1014.3   Mean   :251.8   Mean   : 4.327  
+ 3rd Qu.: 996.3   3rd Qu.:1022.1   3rd Qu.:280.0   3rd Qu.: 5.700  
+ Max.   :1008.5   Max.   :1035.2   Max.   :359.0   Max.   :13.700  
+       ws              prec       
+ Min.   :0.3433   Min.   :0.0000  
+ 1st Qu.:1.2433   1st Qu.:0.0000  
+ Median :2.2967   Median :0.0000  
+ Mean   :2.4322   Mean   :0.0237  
+ 3rd Qu.:3.2575   3rd Qu.:0.0000  
+ Max.   :7.2967   Max.   :6.1633  </code></pre>
+</div>
+</div>
+<p>Powyżej przedstawiono podsumowanie wszystkich atrybutów zbioru danych.</p>
+</section>
+<section id="zbiór-weryfikacyjny-i-przygotowanie-danych-do-analizy" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="zbiór-weryfikacyjny-i-przygotowanie-danych-do-analizy"><span class="header-section-number">2.2</span> Zbiór weryfikacyjny i przygotowanie danych do analizy</h2>
+<p>Dane w zbiorze weryikacyjnym zawierają analogiczne informacje stosunku do zestawu danych <code>ops</code>, ale pomiary zostały wykonane w innym czasie i miejscu. Ponadto zastosowano inną metodę referencyjną pomiaru stężeń PM10 tj. BAM 1020 Met One Instruments zamiast GRIMM EDM 180.</p>
+<p>Załadowanie danych weryfikacyjnych.</p>
+<div class="cell">
+<details open class="code-fold">
+<summary>Show and hide code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;dane/data_test.rdata&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<p>Podgląd danych:</p>
 <div class="cell">
 <details open class="code-fold">
 <summary>Show and hide code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="ot">&lt;-</span> ops_data <span class="sc">|&gt;</span> <span class="fu">select</span>(date<span class="sc">:</span>prec)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="ot">&lt;-</span> weryfikacja <span class="sc">|&gt;</span> </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bam, <span class="at">by =</span> <span class="st">&quot;date&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">grimm_pm10 =</span> bam_pm10) <span class="sc">|&gt;</span> </span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>bam_pm10)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>ops <span class="ot">&lt;-</span> ops <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>ops_pm10, <span class="sc">-</span>pres_sea)</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>nazwy <span class="ot">&lt;-</span> <span class="fu">colnames</span>(ops) <span class="sc">|&gt;</span> <span class="fu">dput</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ops_data <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 768
+Columns: 31
+$ date       &lt;dttm&gt; 2022-03-28 11:00:00, 2022-03-28 12:00:00, 2022-03-28 13:00…
+$ grimm_pm10 &lt;dbl&gt; 34.6, 35.1, 29.4, 22.8, 25.1, 29.7, 42.2, 48.4, 52.6, 61.9,…
+$ n_0044     &lt;dbl&gt; 57.99645, 47.63713, 40.84883, 33.95111, 38.29358, 46.09414,…
+$ n_0075     &lt;dbl&gt; 10.321169, 10.248937, 8.701183, 6.582655, 6.873391, 8.03684…
+$ n_0100     &lt;dbl&gt; 0.5842989, 0.6181682, 0.5501665, 0.4968869, 0.5224946, 0.63…
+$ n_0120     &lt;dbl&gt; 0.10482207, 0.10663098, 0.10668724, 0.09969391, 0.10582430,…
+$ n_0140     &lt;dbl&gt; 0.07401362, 0.06804366, 0.06382736, 0.05970559, 0.06256881,…
+$ n_0200     &lt;dbl&gt; 0.1526519, 0.1454633, 0.1408482, 0.1285833, 0.1246861, 0.15…
+$ n_0250     &lt;dbl&gt; 0.04441785, 0.04681034, 0.04872282, 0.04363414, 0.03833389,…
+$ n_0500     &lt;dbl&gt; 0.08141868, 0.08931507, 0.09927356, 0.09005143, 0.07804893,…
+$ n_0750     &lt;dbl&gt; 0.012786489, 0.014641268, 0.015748957, 0.015787879, 0.01376…
+$ n_1000     &lt;dbl&gt; 0.005569641, 0.006319800, 0.005845149, 0.006928274, 0.00577…
+$ ws         &lt;dbl&gt; 3.9316667, 4.0400000, 3.8650000, 3.7033333, 3.5650000, 2.17…
+$ mws        &lt;dbl&gt; 6.8, 7.3, 6.1, 6.2, 5.7, 4.3, 2.6, 3.5, 2.7, 1.5, 1.5, 1.1,…
+$ wd         &lt;int&gt; 263, 275, 267, 276, 283, 267, 252, 242, 275, 315, 255, 221,…
+$ temp       &lt;dbl&gt; 17.273333, 18.193333, 18.945000, 19.048333, 18.910000, 18.0…
+$ rh         &lt;dbl&gt; 22.59500, 23.26167, 22.21500, 21.39500, 22.16000, 24.82000,…
+$ pres       &lt;dbl&gt; 993.1567, 991.9150, 990.8617, 989.8900, 989.1250, 988.5583,…
+$ prec       &lt;dbl&gt; 0.00000000, 0.00000000, 0.00000000, 0.00000000, 0.00000000,…
+$ poj_h      &lt;dbl&gt; 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000,…
+$ n_0250_m   &lt;dbl&gt; 0.9602043, 0.9851165, 0.9102522, 0.8285038, 0.8539077, 1.05…
+$ n_0500_m   &lt;dbl&gt; 0.1258365, 0.1361254, 0.1479964, 0.1336856, 0.1163828, 0.16…
+$ n_0200_m   &lt;dbl&gt; 0.9157865, 0.9383062, 0.8615293, 0.7848696, 0.8155738, 0.99…
+$ n_0100_m   &lt;dbl&gt; 10.905468, 10.867106, 9.251349, 7.079542, 7.395886, 8.67517…
+$ n_0200_mm  &lt;dbl&gt; 0.3314876, 0.3201379, 0.3113628, 0.2879828, 0.2930792, 0.35…
+$ n_0075_c   &lt;dbl&gt; 68.31762, 57.88607, 49.55001, 40.53377, 45.16697, 54.13098,…
+$ n_0140_c   &lt;dbl&gt; 0.1788357, 0.1746746, 0.1705146, 0.1593995, 0.1683931, 0.20…
+$ n_0500_c   &lt;dbl&gt; 0.1258365, 0.1361254, 0.1479964, 0.1336856, 0.1163828, 0.16…
+$ n_1000_c   &lt;dbl&gt; 0.018356130, 0.020961068, 0.021594106, 0.022716152, 0.01954…
+$ wday       &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2,…
+$ hour       &lt;fct&gt; 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2…</code></pre>
+</div>
+</div>
+<p>Do analizy zosatną wykorzystane dane od data do prec, połaczone z danymi ramki danych bam.</p>
+<div class="cell">
+<details open class="code-fold">
+<summary>Show and hide code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>bam <span class="sc">|&gt;</span> <span class="fu">tail</span>(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   date bam_pm10
+932 2022-05-05 17:00:00    24.04
+933 2022-05-05 18:00:00    23.32
+934 2022-05-05 19:00:00    24.20
+935 2022-05-05 20:00:00    21.77
+936 2022-05-05 21:00:00    20.52</code></pre>
+</div>
+</div>
+<p>Dane będą połączone przy pomocy zamiennej <code>date</code> zapobiegając problemowi różnej ilości obserwacji.</p>
+<p>Przygotowanie dany:</p>
+<div class="cell">
+<details open class="code-fold">
+<summary>Show and hide code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="ot">&lt;-</span> ops_data <span class="sc">|&gt;</span> <span class="fu">select</span>(date<span class="sc">:</span>prec)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="ot">&lt;-</span> weryfikacja <span class="sc">|&gt;</span> </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bam, <span class="at">by =</span> <span class="st">&quot;date&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">grimm_pm10 =</span> bam_pm10) <span class="sc">|&gt;</span> </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>bam_pm10)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>ops <span class="ot">&lt;-</span> ops <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>ops_pm10, <span class="sc">-</span>pres_sea)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>nazwy <span class="ot">&lt;-</span> <span class="fu">colnames</span>(ops) <span class="sc">|&gt;</span> <span class="fu">dput</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>c(&quot;date&quot;, &quot;grimm_pm10&quot;, &quot;n_0044&quot;, &quot;n_0075&quot;, &quot;n_0100&quot;, &quot;n_0120&quot;, 
@@ -3340,14 +3381,47 @@ $ prec       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NaN, NaN, NaN, NaN,
 </div>
 <details open class="code-fold">
 <summary>Show and hide code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="ot">&lt;-</span> weryfikacja <span class="sc">|&gt;</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(nazwy))</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(weryfikacja) <span class="sc">==</span> <span class="fu">colnames</span>(ops)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="ot">&lt;-</span> weryfikacja <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(nazwy))</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(weryfikacja) <span class="sc">==</span> <span class="fu">colnames</span>(ops)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
 [16] TRUE TRUE TRUE TRUE</code></pre>
+</div>
+</div>
+<p>Poniżej wszystkie aktrybuty danych weryfikacyjnych już z podmienioną kolumną <code>grimm_pm10</code> na dane pochodzące z czujnika BAM 1020.</p>
+<p>Usunieto dodatkowo braki danych znajdujące się w zbiorze.</p>
+<div class="cell">
+<details open class="code-fold">
+<summary>Show and hide code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="ot">&lt;-</span> weryfikacja <span class="sc">|&gt;</span> <span class="fu">na.omit</span>()</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 532
+Columns: 19
+$ date       &lt;dttm&gt; 2022-04-02 23:00:00, 2022-04-03 23:00:00, 2022-04-04 23:00…
+$ grimm_pm10 &lt;dbl&gt; 24.200, 37.310, 23.770, 15.220, 16.540, 19.410, 26.890, 37.…
+$ n_0044     &lt;dbl&gt; 79.348311, 148.498394, 84.410340, 40.485845, 25.096198, 33.…
+$ n_0075     &lt;dbl&gt; 11.1086391, 27.3965894, 5.7761276, 5.4314590, 2.4117773, 5.…
+$ n_0100     &lt;dbl&gt; 0.8129678, 1.9433236, 0.3641429, 0.3560367, 0.1503589, 0.37…
+$ n_0120     &lt;dbl&gt; 0.15018321, 0.31724048, 0.08363293, 0.04527078, 0.03220879,…
+$ n_0140     &lt;dbl&gt; 0.08258160, 0.14252738, 0.05750945, 0.01998249, 0.01921879,…
+$ n_0200     &lt;dbl&gt; 0.15718404, 0.19437253, 0.09839405, 0.02657826, 0.03799055,…
+$ n_0250     &lt;dbl&gt; 0.048222408, 0.033054490, 0.018771413, 0.005608285, 0.00994…
+$ n_0500     &lt;dbl&gt; 0.088959967, 0.040607173, 0.022349555, 0.008732555, 0.01646…
+$ n_0750     &lt;dbl&gt; 0.0102429803, 0.0038165138, 0.0014582870, 0.0007842647, 0.0…
+$ n_1000     &lt;dbl&gt; 0.0022037809, 0.0011531832, 0.0005428254, 0.0001167640, 0.0…
+$ temp       &lt;dbl&gt; 0.04333333, 0.21000000, 4.74833333, 7.39000000, 11.54333333…
+$ rh         &lt;dbl&gt; 76.87833, 55.84167, 52.55833, 65.63667, 55.62000, 49.11167,…
+$ pres       &lt;dbl&gt; 981.6367, 990.3050, 976.5950, 978.0100, 979.6167, 976.2433,…
+$ wd         &lt;int&gt; 297, 252, 244, 261, 251, 185, 174, 320, 112, 117, 141, 116,…
+$ mws        &lt;dbl&gt; 2.6, 2.9, 7.6, 5.1, 6.4, 1.7, 2.3, 1.0, 1.5, 1.2, 1.2, 1.0,…
+$ ws         &lt;dbl&gt; 1.5133333, 1.5183333, 4.9616667, 2.3583333, 3.9666667, 1.13…
+$ prec       &lt;dbl&gt; 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.00000…</code></pre>
 </div>
 </div>
 <!-- -->
@@ -3832,122 +3906,160 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class>
-<div class="sourceCode" id="cb16" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;CALPM&quot;</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> &quot;Grupa 2&quot;</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: Spis Treści</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">    number-sections: true</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">    embed-resources: true</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">    html-math-method: katex</span></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: show</span></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co">    code-summary: &quot;Show and hide code&quot;</span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co">    link-external-icon: true</span></span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co">    link-external-newwindow: true</span></span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co">    smooth-scroll: true</span></span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co">    self-contained: true</span></span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co">    fig-align: center</span></span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span><span class="co"> </span></span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="co">  cache: true</span></span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="co">  error: false</span></span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="co">  output: true</span></span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="fu"># Pakiety</span></span>
-<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>Pakiety potrzebne do wykonanie analizy danych i modeli.</span>
-<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
-<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vip)</span>
-<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pdp)</span>
-<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DALEX)</span>
-<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DALEXtra)</span>
-<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bestNormalize)</span>
-<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rules)</span>
-<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(baguette)</span>
-<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(finetune)</span>
-<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(doParallel)</span>
-<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openair)</span>
-<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a><span class="fu"># Dane</span></span>
-<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>Załadowanie danych treningowych.</span>
-<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;dane/ops.RData&quot;</span>) </span>
-<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span>
-<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">is.na</span>() <span class="sc">|&gt;</span> <span class="fu">colSums</span>()</span>
-<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span>
-<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a><span class="fu">## Opis danych znajdujących się w zbiorze</span></span>
-<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span>
-<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a>Zestaw składa się z 21 zmiennych oraz 869 obserwacji. Objaśnienie każdej z nich:</span>
-<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`date`</span> - Data (krok 1 godzina)</span>
-<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`grimm_pm10`</span> - Średnie 1-godzinne stężenia PM10 zmierzone za pomocą GRIMM EDM 180</span>
-<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`ops_pm10`</span> - Średnie 1-godzinne stężenia PM10 zmierzone za pomocą TSI OPS 3330</span>
-<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0044`</span> - liczba zliczeń cząstek w od 0.3 do 0.44 µm wyrażona w zliczeniach/cm^3^</span>
-<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0075`</span> - liczba zliczeń cząstek w od 0.44 do 0.75 µm wyrażona w zliczeniach/cm^3^</span>
-<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0100`</span> - liczba zliczeń cząstek w od 0.75 do 1.00 µm wyrażona w zliczeniach/cm^3^</span>
-<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0120`</span> - liczba zliczeń cząstek w od 1.00 do 1.20 µm wyrażona w zliczeniach/cm^3^</span>
-<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0140`</span> - liczba zliczeń cząstek w od 1.20 do 1.40 µm wyrażona w zliczeniach/cm^3^</span>
-<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0200`</span> - liczba zliczeń cząstek w od 1.40 do 2.00 µm wyrażona w zliczeniach/cm^3^</span>
-<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0250`</span> - liczba zliczeń cząstek w od 2.00 do 2.50 µm wyrażona w zliczeniach/cm^3^</span>
-<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0500`</span> - liczba zliczeń cząstek w od 2.50 do 5.00 µm wyrażona w zliczeniach/cm^3^</span>
-<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0750`</span> - liczba zliczeń cząstek w od 5.00 do 7.50 µm wyrażona w zliczeniach/cm^3^</span>
-<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_1000`</span> - liczba zliczeń cząstek w od 7.50 do 10.4 µm wyrażona w zliczeniach/cm^3^</span>
-<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`temp`</span> - temperatura powietrza <span class="co">[</span><span class="ot">°C</span><span class="co">]</span></span>
-<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`rh`</span> - wilgotność względna <span class="co">[</span><span class="ot">%</span><span class="co">]</span></span>
-<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`pres`</span> - ćiśnienie na poziomie stacji <span class="co">[</span><span class="ot">hPa</span><span class="co">]</span></span>
-<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`pres_sea`</span> - ciśnienie nad poziomem morza <span class="co">[</span><span class="ot">hPa</span><span class="co">]</span></span>
-<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`wd`</span> - kierunke wiatru <span class="co">[</span><span class="ot">°</span><span class="co">]</span></span>
-<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`mws`</span> - maksymlan prędkość wiatru <span class="co">[</span><span class="ot">m/s</span><span class="co">]</span></span>
-<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`ws`</span> - prędkość wiatru <span class="co">[</span><span class="ot">m/s</span><span class="co">]</span></span>
-<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`prec`</span> - opad atmosferyczny <span class="co">[</span><span class="ot">mm/h</span><span class="co">]</span></span>
-<span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a><span class="fu">## Weryfikacja i przygotowanie danych do analizy</span></span>
-<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;dane/ops.RData&quot;</span>) ; ops <span class="ot">&lt;-</span> ops <span class="sc">|&gt;</span> <span class="fu">na.omit</span>()</span>
-<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;dane/data_test.rdata&quot;</span>)</span>
-<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-115"><a href="#cb16-115" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="ot">&lt;-</span> ops_data <span class="sc">|&gt;</span> <span class="fu">select</span>(date<span class="sc">:</span>prec)</span>
-<span id="cb16-116"><a href="#cb16-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-117"><a href="#cb16-117" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="ot">&lt;-</span> weryfikacja <span class="sc">|&gt;</span> </span>
-<span id="cb16-118"><a href="#cb16-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bam, <span class="at">by =</span> <span class="st">&quot;date&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb16-119"><a href="#cb16-119" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">grimm_pm10 =</span> bam_pm10) <span class="sc">|&gt;</span> </span>
-<span id="cb16-120"><a href="#cb16-120" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>bam_pm10)</span>
-<span id="cb16-121"><a href="#cb16-121" aria-hidden="true" tabindex="-1"></a>ops <span class="ot">&lt;-</span> ops <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>ops_pm10, <span class="sc">-</span>pres_sea)</span>
-<span id="cb16-122"><a href="#cb16-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-123"><a href="#cb16-123" aria-hidden="true" tabindex="-1"></a>nazwy <span class="ot">&lt;-</span> <span class="fu">colnames</span>(ops) <span class="sc">|&gt;</span> <span class="fu">dput</span>()</span>
-<span id="cb16-124"><a href="#cb16-124" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="ot">&lt;-</span> weryfikacja <span class="sc">|&gt;</span> </span>
-<span id="cb16-125"><a href="#cb16-125" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(nazwy))</span>
-<span id="cb16-126"><a href="#cb16-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-127"><a href="#cb16-127" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(weryfikacja) <span class="sc">==</span> <span class="fu">colnames</span>(ops)</span>
-<span id="cb16-128"><a href="#cb16-128" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<div class="sourceCode" id="cb22" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;CALPM&quot;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> &quot;Grupa 2&quot;</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: Spis Treści</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">    number-sections: true</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">    embed-resources: true</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co">    html-math-method: katex</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: show</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co">    code-summary: &quot;Show and hide code&quot;</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co">    link-external-icon: true</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co">    link-external-newwindow: true</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="co">    smooth-scroll: true</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co">    self-contained: true</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co">    fig-align: center</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span><span class="co"> </span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="co">  cache: true</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="co">  error: false</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="co">  output: true</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="fu"># Pakiety</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>Pakiety potrzebne do wykonanie analizy danych i modeli.</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vip)</span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pdp)</span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DALEX)</span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DALEXtra)</span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bestNormalize)</span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rules)</span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(baguette)</span>
+<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(finetune)</span>
+<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(doParallel)</span>
+<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openair)</span>
+<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a><span class="fu"># Dane</span></span>
+<span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a>Załadowanie danych treningowych.</span>
+<span id="cb22-54"><a href="#cb22-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-57"><a href="#cb22-57" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-58"><a href="#cb22-58" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;dane/ops.RData&quot;</span>) </span>
+<span id="cb22-59"><a href="#cb22-59" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-60"><a href="#cb22-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-61"><a href="#cb22-61" aria-hidden="true" tabindex="-1"></a><span class="fu">## Opis danych znajdujących się w zbiorze</span></span>
+<span id="cb22-62"><a href="#cb22-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-65"><a href="#cb22-65" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-66"><a href="#cb22-66" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span>
+<span id="cb22-67"><a href="#cb22-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-68"><a href="#cb22-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-69"><a href="#cb22-69" aria-hidden="true" tabindex="-1"></a>Zestaw składa się z 21 zmiennych oraz 909 obserwacji. Objaśnienie każdej z nich:</span>
+<span id="cb22-70"><a href="#cb22-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-71"><a href="#cb22-71" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`date`</span> - Data (krok 1 godzina)</span>
+<span id="cb22-72"><a href="#cb22-72" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`grimm_pm10`</span> - Średnie 1-godzinne stężenia PM10 zmierzone za pomocą GRIMM EDM 180</span>
+<span id="cb22-73"><a href="#cb22-73" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`ops_pm10`</span> - Średnie 1-godzinne stężenia PM10 zmierzone za pomocą TSI OPS 3330</span>
+<span id="cb22-74"><a href="#cb22-74" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0044`</span> - liczba zliczeń cząstek w od 0.3 do 0.44 µm wyrażona w zliczeniach/cm^3^</span>
+<span id="cb22-75"><a href="#cb22-75" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0075`</span> - liczba zliczeń cząstek w od 0.44 do 0.75 µm wyrażona w zliczeniach/cm^3^</span>
+<span id="cb22-76"><a href="#cb22-76" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0100`</span> - liczba zliczeń cząstek w od 0.75 do 1.00 µm wyrażona w zliczeniach/cm^3^</span>
+<span id="cb22-77"><a href="#cb22-77" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0120`</span> - liczba zliczeń cząstek w od 1.00 do 1.20 µm wyrażona w zliczeniach/cm^3^</span>
+<span id="cb22-78"><a href="#cb22-78" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0140`</span> - liczba zliczeń cząstek w od 1.20 do 1.40 µm wyrażona w zliczeniach/cm^3^</span>
+<span id="cb22-79"><a href="#cb22-79" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0200`</span> - liczba zliczeń cząstek w od 1.40 do 2.00 µm wyrażona w zliczeniach/cm^3^</span>
+<span id="cb22-80"><a href="#cb22-80" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0250`</span> - liczba zliczeń cząstek w od 2.00 do 2.50 µm wyrażona w zliczeniach/cm^3^</span>
+<span id="cb22-81"><a href="#cb22-81" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0500`</span> - liczba zliczeń cząstek w od 2.50 do 5.00 µm wyrażona w zliczeniach/cm^3^</span>
+<span id="cb22-82"><a href="#cb22-82" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_0750`</span> - liczba zliczeń cząstek w od 5.00 do 7.50 µm wyrażona w zliczeniach/cm^3^</span>
+<span id="cb22-83"><a href="#cb22-83" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`n_1000`</span> - liczba zliczeń cząstek w od 7.50 do 10.4 µm wyrażona w zliczeniach/cm^3^</span>
+<span id="cb22-84"><a href="#cb22-84" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`temp`</span> - temperatura powietrza <span class="co">[</span><span class="ot">°C</span><span class="co">]</span></span>
+<span id="cb22-85"><a href="#cb22-85" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`rh`</span> - wilgotność względna <span class="co">[</span><span class="ot">%</span><span class="co">]</span></span>
+<span id="cb22-86"><a href="#cb22-86" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`pres`</span> - ćiśnienie na poziomie stacji <span class="co">[</span><span class="ot">hPa</span><span class="co">]</span></span>
+<span id="cb22-87"><a href="#cb22-87" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`pres_sea`</span> - ciśnienie nad poziomem morza <span class="co">[</span><span class="ot">hPa</span><span class="co">]</span></span>
+<span id="cb22-88"><a href="#cb22-88" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`wd`</span> - kierunke wiatru <span class="co">[</span><span class="ot">°</span><span class="co">]</span></span>
+<span id="cb22-89"><a href="#cb22-89" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`mws`</span> - maksymlan prędkość wiatru <span class="co">[</span><span class="ot">m/s</span><span class="co">]</span></span>
+<span id="cb22-90"><a href="#cb22-90" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`ws`</span> - prędkość wiatru <span class="co">[</span><span class="ot">m/s</span><span class="co">]</span></span>
+<span id="cb22-91"><a href="#cb22-91" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="in">`prec`</span> - opad atmosferyczny <span class="co">[</span><span class="ot">mm/h</span><span class="co">]</span></span>
+<span id="cb22-92"><a href="#cb22-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-95"><a href="#cb22-95" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-96"><a href="#cb22-96" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">is.na</span>() <span class="sc">|&gt;</span> <span class="fu">colSums</span>()</span>
+<span id="cb22-97"><a href="#cb22-97" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-98"><a href="#cb22-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-99"><a href="#cb22-99" aria-hidden="true" tabindex="-1"></a>W zbiorze można zaobserwować liczne braki danych, które należy wyelminować przed dalszą analizą.</span>
+<span id="cb22-100"><a href="#cb22-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-103"><a href="#cb22-103" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-104"><a href="#cb22-104" aria-hidden="true" tabindex="-1"></a>ops <span class="ot">&lt;-</span> ops <span class="sc">|&gt;</span> <span class="fu">na.omit</span>()</span>
+<span id="cb22-105"><a href="#cb22-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-106"><a href="#cb22-106" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">is.na</span>() <span class="sc">|&gt;</span> <span class="fu">sum</span>()</span>
+<span id="cb22-107"><a href="#cb22-107" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-108"><a href="#cb22-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-109"><a href="#cb22-109" aria-hidden="true" tabindex="-1"></a>Wszystkie braki danych zosatały usunięte.</span>
+<span id="cb22-110"><a href="#cb22-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-113"><a href="#cb22-113" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-114"><a href="#cb22-114" aria-hidden="true" tabindex="-1"></a>ops <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span>
+<span id="cb22-115"><a href="#cb22-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-116"><a href="#cb22-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-117"><a href="#cb22-117" aria-hidden="true" tabindex="-1"></a>Powyżej przedstawiono podsumowanie wszystkich atrybutów zbioru danych.</span>
+<span id="cb22-118"><a href="#cb22-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-119"><a href="#cb22-119" aria-hidden="true" tabindex="-1"></a><span class="fu">## Zbiór weryfikacyjny i przygotowanie danych do analizy</span></span>
+<span id="cb22-120"><a href="#cb22-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-121"><a href="#cb22-121" aria-hidden="true" tabindex="-1"></a>Dane w zbiorze weryikacyjnym zawierają analogiczne informacje stosunku do zestawu danych <span class="in">`ops`</span>, ale pomiary zostały wykonane w innym czasie i miejscu. Ponadto zastosowano inną metodę referencyjną pomiaru stężeń PM10 tj. BAM 1020 Met One Instruments zamiast GRIMM EDM 180.</span>
+<span id="cb22-122"><a href="#cb22-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-123"><a href="#cb22-123" aria-hidden="true" tabindex="-1"></a>Załadowanie danych weryfikacyjnych.</span>
+<span id="cb22-124"><a href="#cb22-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-127"><a href="#cb22-127" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-128"><a href="#cb22-128" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;dane/data_test.rdata&quot;</span>)</span>
+<span id="cb22-129"><a href="#cb22-129" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-130"><a href="#cb22-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-131"><a href="#cb22-131" aria-hidden="true" tabindex="-1"></a>Podgląd danych:</span>
+<span id="cb22-132"><a href="#cb22-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-135"><a href="#cb22-135" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-136"><a href="#cb22-136" aria-hidden="true" tabindex="-1"></a>ops_data <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span>
+<span id="cb22-137"><a href="#cb22-137" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-138"><a href="#cb22-138" aria-hidden="true" tabindex="-1"></a>Do analizy zosatną wykorzystane dane od data do prec, połaczone z danymi ramki danych bam.</span>
+<span id="cb22-139"><a href="#cb22-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-142"><a href="#cb22-142" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-143"><a href="#cb22-143" aria-hidden="true" tabindex="-1"></a>bam <span class="sc">|&gt;</span> <span class="fu">tail</span>(<span class="dv">5</span>)</span>
+<span id="cb22-144"><a href="#cb22-144" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-145"><a href="#cb22-145" aria-hidden="true" tabindex="-1"></a>Dane będą połączone przy pomocy zamiennej <span class="in">`date`</span> zapobiegając problemowi różnej ilości obserwacji.</span>
+<span id="cb22-146"><a href="#cb22-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-147"><a href="#cb22-147" aria-hidden="true" tabindex="-1"></a>Przygotowanie dany:</span>
+<span id="cb22-148"><a href="#cb22-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-151"><a href="#cb22-151" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-152"><a href="#cb22-152" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="ot">&lt;-</span> ops_data <span class="sc">|&gt;</span> <span class="fu">select</span>(date<span class="sc">:</span>prec)</span>
+<span id="cb22-153"><a href="#cb22-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-154"><a href="#cb22-154" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="ot">&lt;-</span> weryfikacja <span class="sc">|&gt;</span> </span>
+<span id="cb22-155"><a href="#cb22-155" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bam, <span class="at">by =</span> <span class="st">&quot;date&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb22-156"><a href="#cb22-156" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">grimm_pm10 =</span> bam_pm10) <span class="sc">|&gt;</span> </span>
+<span id="cb22-157"><a href="#cb22-157" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>bam_pm10)</span>
+<span id="cb22-158"><a href="#cb22-158" aria-hidden="true" tabindex="-1"></a>ops <span class="ot">&lt;-</span> ops <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>ops_pm10, <span class="sc">-</span>pres_sea)</span>
+<span id="cb22-159"><a href="#cb22-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-160"><a href="#cb22-160" aria-hidden="true" tabindex="-1"></a>nazwy <span class="ot">&lt;-</span> <span class="fu">colnames</span>(ops) <span class="sc">|&gt;</span> <span class="fu">dput</span>()</span>
+<span id="cb22-161"><a href="#cb22-161" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="ot">&lt;-</span> weryfikacja <span class="sc">|&gt;</span> </span>
+<span id="cb22-162"><a href="#cb22-162" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(nazwy))</span>
+<span id="cb22-163"><a href="#cb22-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-164"><a href="#cb22-164" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(weryfikacja) <span class="sc">==</span> <span class="fu">colnames</span>(ops)</span>
+<span id="cb22-165"><a href="#cb22-165" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-166"><a href="#cb22-166" aria-hidden="true" tabindex="-1"></a>Poniżej wszystkie aktrybuty danych weryfikacyjnych już z podmienioną kolumną <span class="in">`grimm_pm10`</span> na dane pochodzące z czujnika BAM 1020.</span>
+<span id="cb22-167"><a href="#cb22-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-168"><a href="#cb22-168" aria-hidden="true" tabindex="-1"></a>Usunieto dodatkowo braki danych znajdujące się w zbiorze.</span>
+<span id="cb22-169"><a href="#cb22-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-172"><a href="#cb22-172" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-173"><a href="#cb22-173" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="ot">&lt;-</span> weryfikacja <span class="sc">|&gt;</span> <span class="fu">na.omit</span>()</span>
+<span id="cb22-174"><a href="#cb22-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-175"><a href="#cb22-175" aria-hidden="true" tabindex="-1"></a>weryfikacja <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span>
+<span id="cb22-176"><a href="#cb22-176" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

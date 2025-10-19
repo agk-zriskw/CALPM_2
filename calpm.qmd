@@ -88,7 +88,7 @@ Zestaw składa się z 21 zmiennych oraz 909 obserwacji. Objaśnienie każdej z n
 ops |> is.na() |> colSums()
 ```
 
-W zbiorze można zaobserwować liczne braki danych, które należy wyelminować przed dalszą analizą
+W zbiorze można zaobserwować liczne braki danych, które należy wyelminować przed dalszą analizą.
 
 ```{r}
 ops <- ops |> na.omit()
@@ -96,18 +96,37 @@ ops <- ops |> na.omit()
 ops |> is.na() |> sum()
 ```
 
+Wszystkie braki danych zosatały usunięte.
+
 ```{r}
 ops |> summary()
 ```
 
-
+Powyżej przedstawiono podsumowanie wszystkich atrybutów zbioru danych.
 
 ## Zbiór weryfikacyjny i przygotowanie danych do analizy
 
+Dane w zbiorze weryikacyjnym zawierają analogiczne informacje stosunku do zestawu danych `ops`, ale pomiary zostały wykonane w innym czasie i miejscu. Ponadto zastosowano inną metodę referencyjną pomiaru stężeń PM10 tj. BAM 1020 Met One Instruments zamiast GRIMM EDM 180.
+
+Załadowanie danych weryfikacyjnych.
 
 ```{r}
 load("dane/data_test.rdata")
 ```
+
+Podgląd danych:
+
+```{r}
+ops_data |> glimpse()
+```
+Do analizy zosatną wykorzystane dane od data do prec, połaczone z danymi ramki danych bam.
+
+```{r}
+bam |> tail(5)
+```
+Dane będą połączone przy pomocy zamiennej `date` zapobiegając problemowi różnej ilości obserwacji.
+
+Przygotowanie dany:
 
 ```{r}
 weryfikacja <- ops_data |> select(date:prec)
@@ -124,3 +143,13 @@ weryfikacja <- weryfikacja |>
 
 colnames(weryfikacja) == colnames(ops)
 ```
+Poniżej wszystkie aktrybuty danych weryfikacyjnych już z podmienioną kolumną `grimm_pm10` na dane pochodzące z czujnika BAM 1020.
+
+Usunieto dodatkowo braki danych znajdujące się w zbiorze.
+
+```{r}
+weryfikacja <- weryfikacja |> na.omit()
+
+weryfikacja |> glimpse()
+```
+
