@@ -181,13 +181,74 @@ ops_pm10 |> na.omit() |>
 
 remove(ops_pm10)
 ```
+Zaobserwowano, że dane z OPS są mocno niedoszacowane względem metody równoważnej do referencyjnej (około 2 krotnie).
 
+## Szereg czasowy danych
 
+```{r}
+ops |> 
+  ggplot(aes(x = date, y = grimm_pm10)) +
+  geom_line(color = "steelblue") +
+  theme_bw() +
+  labs(title = "Szereg czasowy PM10 GRIMM",
+       x = "Data",
+       y = "PM10 [µg/m^3^]")
+```
 
+Na szeregu czsowanym można zaobserwować dużą zmienność poziomu stężania pyłu zawioszonego. Widoczna jest również cykliczność danych w pewnych dania stężenie wyraźnie spada w porównaniu z dniami o największych poziomach.
 
+## PM10 vs dni tygodnia
 
+Dodanie rozróżnienia w dniach tygodnia
 
+```{r}
+ops <- 
+  ops |> 
+  janitor::clean_names() |> 
+  mutate(jday = lubridate::yday(date)) |> 
+  mutate(
+    wday = lubridate::wday(x = date, abbr = T, label = T),
+    hour = lubridate::hour(x = date),
+    day_work = case_when(
+      wday == "Mon" ~ "week",
+      wday == "Tue" ~ "week",
+      wday == "Wed" ~ "week",
+      wday == "Thu" ~ "week",
+      wday == "Fri" ~ "week",
+      wday == "Sat" ~ "weekend",
+      wday == "Sun" ~ "weekend"
+    )
+  ) |> 
+  mutate(day_work = as.factor(day_work))
+```
 
+Wykres pokazujący średnie wartości stężenia PM10 w danym dniu tygodnia.
+
+```{r}
+ops |>
+  group_by(wday) |>
+  summarise(mean_pm10 = mean(grimm_pm10, na.rm = TRUE)) |>
+  ggplot(aes(x = wday, y = mean_pm10, fill = wday)) +
+  geom_col(width = 0.7) +
+  scale_fill_viridis_d(option = "D") +
+  labs(title = "Średnie tygodniowe wartości PM10 (GRIMM)",
+      x = "Dzień tygodnia",
+      y = "Średnie PM10 GRIMM",
+      fill = "Dzień tygodnia") +
+  theme_bw() +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold"))
+```
+
+Wyraźnie widać spadek stężnież w dni wolne od pracy oraz środę. Duży wzrost przypada na poniedziałek z tendecją spadkową w kolejne dni.
+
+## Wizualizacja zliczeń w czasie
+
+Przedstawienie danych, które zostaną użyte w modelach ml.
+
+```{r}
+
+```
 
 
 
