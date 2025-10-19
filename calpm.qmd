@@ -42,6 +42,7 @@ library(rules)
 library(baguette)
 library(finetune)
 library(doParallel)
+library(GGally)
 library(openair)
 ```
 
@@ -101,6 +102,7 @@ Wszystkie braki danych zosatały usunięte.
 ```{r}
 ops |> summary()
 ```
+
 
 Powyżej przedstawiono podsumowanie wszystkich atrybutów zbioru danych.
 
@@ -247,12 +249,39 @@ Wyraźnie widać spadek stężnież w dni wolne od pracy oraz środę. Duży wzr
 Przedstawienie danych, które zostaną użyte w modelach ml.
 
 ```{r}
-
+ops |> 
+  select(date, starts_with("n_0")) |> 
+  pivot_longer(cols = starts_with("n_0"),
+               names_to = "particle_size",
+               values_to = "count") |> 
+  mutate(particle_size = factor(particle_size,
+                                levels = c("n_0044", "n_0075", "n_0100",
+                                           "n_0120", "n_0140", "n_0200",
+                                           "n_0250", "n_0500", "n_0750",
+                                           "n_1000"))) |> 
+  ggplot(aes(x = date, y = particle_size, fill = count)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "magma", trans = "log10") +
+  labs(title = "Zmienność zliczeń cząstek w czasie (n_0044 – n_1000)",
+       x = "Data",
+       y = "Rozmiar cząstek",
+       fill = "Liczność [log10]") +
+  theme_bw()+
+  theme(axis.text.y = element_text(size = 9), 
+        plot.title = element_text(face = "bold"))
 ```
 
+Największą ilością charakteryzują się najmniesze cząstki, im większa średnica tym ilość zliczeń jest mniejsza.
 
+## Korelacje między zmiennymi
 
+```{r}
+ops |> 
+  select(grimm_pm10, temp, rh, pres, wd, mws, ws) |> 
+  ggpairs()
+```
 
+Patrząc na korelacje pomiędzy danymi z urządzenia referencyjnego, a warunkami pomiaru można zauważyć dużą korelację prędkości wiatru i stężenia cząstek. Wartości koralacji nie są tak duże by wymagały usunięcia z analizy.
 
 
 
