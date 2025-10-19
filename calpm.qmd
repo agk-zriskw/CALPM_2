@@ -283,7 +283,19 @@ ops |>
 
 Patrząc na korelacje pomiędzy danymi z urządzenia referencyjnego, a warunkami pomiaru można zauważyć dużą korelację prędkości wiatru i stężenia cząstek. Wartości koralacji nie są tak duże by wymagały usunięcia z analizy.
 
+# Podział danych
 
+```{r}
+data_split <- initial_validation_split(data = ops)
 
+ops_train <- training(data_split)
+ops_test <- testing(data_split)
+ops_valid <- validation_set(data_split)
+
+save(data_split, ops_train, ops_test, ops_valid, weryfikacja, file = "spliting_ops.Rdata")
+```
+
+Dane zostały podzielone na odpowiednie grupy w celu wukonanie modeli uczenia maszynowego.
+Jako zbiór weryfikacyjny `weryfikacja`.
 
 
