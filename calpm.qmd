@@ -135,6 +135,9 @@ weryfikacja <- weryfikacja |>
   left_join(bam, by = "date") |> 
   mutate(grimm_pm10 = bam_pm10) |> 
   select(-bam_pm10)
+
+ops_pm10 <- ops
+
 ops <- ops |> select(-ops_pm10, -pres_sea)
 
 nazwy <- colnames(ops) |> dput()
@@ -152,4 +155,45 @@ weryfikacja <- weryfikacja |> na.omit()
 
 weryfikacja |> glimpse()
 ```
+
+# Eskploratacyjna analiza danych
+
+Porównanie wyników pomiarowych stężeń PM_10_ wykonanych przy zastowaniu dwóch podobnych metod pomiarowych:
+
+* **TSI OPS 3330** - metoda optyczna nie uznawana za równoważną do referencyjnej
+* **GRIMM EDM180** - metoda optyczna równoważna do referencyjnej (kalibrowana na podstawie danych referencyjnych w lokalizacji wykonywania pomiarów)
+
+```{r}
+ops_pm10 |> na.omit() |> 
+  ggplot(mapping = aes(x = grimm_pm10, 
+                       y = ops_pm10)) + 
+  geom_point(shape = 16, alpha = 0.3) +
+  geom_abline(slope = c(0.5, 2, 1), 
+              col = c( "blue4", "blue4", "red4"), size = 0.8) +
+  geom_smooth(method = lm, color = "green4") +
+  theme_bw() +
+  scale_x_continuous(expand = c(0,0), limits = c(0, 101)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0, 101)) + 
+  labs(title = "Porównanie metod pomiarowych stężeń PM10", 
+       y = "TSI OPS 3330", 
+       x = "GRIMM EDM 180") +
+  coord_equal()
+
+remove(ops_pm10)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
