@@ -19,35 +19,99 @@ format:
     fig-align: center
 execute: 
   echo: true
+  cache: true
   error: false
   warning: false
   output: true
 ---
 
-# Dane
+# Pakiety
+
+Pakiety potrzebne do wykonanie analizy danych i modeli.
+
 ```{r}
+library(tidymodels)
 library(tidyverse)
+library(stringr)
+library(vip)
+library(pdp)
+library(DALEX)
+library(DALEXtra)
+library(bestNormalize)
+library(rules)
+library(baguette)
+library(finetune)
+library(doParallel)
 library(openair)
 ```
+
+
+# Dane
+
+Załadowanie danych treningowych.
 
 ```{r}
 load("dane/ops.RData") 
 ```
 
+## Opis danych znajdujących się w zbiorze
+
 ```{r}
-ops |> summary()
-ops |> is.na() |> colSums()
 ops |> glimpse()
 ```
 
+Zestaw składa się z 21 zmiennych oraz 909 obserwacji. Objaśnienie każdej z nich:
+
+* `date` - Data (krok 1 godzina)
+* `grimm_pm10` - Średnie 1-godzinne stężenia PM10 zmierzone za pomocą GRIMM EDM 180
+* `ops_pm10` - Średnie 1-godzinne stężenia PM10 zmierzone za pomocą TSI OPS 3330
+* `n_0044` - liczba zliczeń cząstek w od 0.3 do 0.44 µm wyrażona w zliczeniach/cm^3^
+* `n_0075` - liczba zliczeń cząstek w od 0.44 do 0.75 µm wyrażona w zliczeniach/cm^3^
+* `n_0100` - liczba zliczeń cząstek w od 0.75 do 1.00 µm wyrażona w zliczeniach/cm^3^
+* `n_0120` - liczba zliczeń cząstek w od 1.00 do 1.20 µm wyrażona w zliczeniach/cm^3^
+* `n_0140` - liczba zliczeń cząstek w od 1.20 do 1.40 µm wyrażona w zliczeniach/cm^3^
+* `n_0200` - liczba zliczeń cząstek w od 1.40 do 2.00 µm wyrażona w zliczeniach/cm^3^
+* `n_0250` - liczba zliczeń cząstek w od 2.00 do 2.50 µm wyrażona w zliczeniach/cm^3^
+* `n_0500` - liczba zliczeń cząstek w od 2.50 do 5.00 µm wyrażona w zliczeniach/cm^3^
+* `n_0750` - liczba zliczeń cząstek w od 5.00 do 7.50 µm wyrażona w zliczeniach/cm^3^
+* `n_1000` - liczba zliczeń cząstek w od 7.50 do 10.4 µm wyrażona w zliczeniach/cm^3^
+* `temp` - temperatura powietrza [°C]
+* `rh` - wilgotność względna [%]
+* `pres` - ćiśnienie na poziomie stacji [hPa]
+* `pres_sea` - ciśnienie nad poziomem morza [hPa]
+* `wd` - kierunke wiatru [°]
+* `mws` - maksymlan prędkość wiatru [m/s]
+* `ws` - prędkość wiatru [m/s]
+* `prec` - opad atmosferyczny [mm/h]
 
 ```{r}
-load("dane/ops.RData") ; ops <- ops |> na.omit()
+ops |> is.na() |> colSums()
+```
+
+W zbiorze można zaobserwować liczne braki danych, które należy wyelminować przed dalszą analizą
+
+```{r}
+ops <- ops |> na.omit()
+
+ops |> is.na() |> sum()
+```
+
+```{r}
+ops |> summary()
+```
+
+
+
+## Zbiór weryfikacyjny i przygotowanie danych do analizy
+
+
+```{r}
 load("dane/data_test.rdata")
 ```
 
 ```{r}
 weryfikacja <- ops_data |> select(date:prec)
+
 weryfikacja <- weryfikacja |> 
   left_join(bam, by = "date") |> 
   mutate(grimm_pm10 = bam_pm10) |> 
