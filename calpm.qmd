@@ -19,39 +19,128 @@ format:
     fig-align: center
 execute: 
   echo: true
+  cache: true
   error: false
   warning: false
   output: true
 ---
 
-# Dane
+# Pakiety
+
+Pakiety potrzebne do wykonanie analizy danych i modeli.
+
 ```{r}
+library(tidymodels)
 library(tidyverse)
+library(stringr)
+library(vip)
+library(pdp)
+library(DALEX)
+library(DALEXtra)
+library(bestNormalize)
+library(rules)
+library(baguette)
+library(finetune)
+library(doParallel)
+library(GGally)
 library(openair)
 ```
+
+
+# Dane
+
+Załadowanie danych treningowych.
 
 ```{r}
 load("dane/ops.RData") 
 ```
 
+## Opis danych znajdujących się w zbiorze
+
 ```{r}
-ops |> summary()
-ops |> is.na() |> colSums()
 ops |> glimpse()
 ```
 
+Zestaw składa się z 21 zmiennych oraz 909 obserwacji. Objaśnienie każdej z nich:
+
+* `date` - Data (krok 1 godzina)
+* `grimm_pm10` - Średnie 1-godzinne stężenie PM10 zmierzone za pomocą GRIMM EDM 180
+* `ops_pm10` - Średnie 1-godzinne stężenie PM10 zmierzone za pomocą TSI OPS 3330
+* `n_0044` - liczba zliczeń cząstek w od 0.3 do 0.44 µm wyrażona w zliczeniach/cm^3^
+* `n_0075` - liczba zliczeń cząstek w od 0.44 do 0.75 µm wyrażona w zliczeniach/cm^3^
+* `n_0100` - liczba zliczeń cząstek w od 0.75 do 1.00 µm wyrażona w zliczeniach/cm^3^
+* `n_0120` - liczba zliczeń cząstek w od 1.00 do 1.20 µm wyrażona w zliczeniach/cm^3^
+* `n_0140` - liczba zliczeń cząstek w od 1.20 do 1.40 µm wyrażona w zliczeniach/cm^3^
+* `n_0200` - liczba zliczeń cząstek w od 1.40 do 2.00 µm wyrażona w zliczeniach/cm^3^
+* `n_0250` - liczba zliczeń cząstek w od 2.00 do 2.50 µm wyrażona w zliczeniach/cm^3^
+* `n_0500` - liczba zliczeń cząstek w od 2.50 do 5.00 µm wyrażona w zliczeniach/cm^3^
+* `n_0750` - liczba zliczeń cząstek w od 5.00 do 7.50 µm wyrażona w zliczeniach/cm^3^
+* `n_1000` - liczba zliczeń cząstek w od 7.50 do 10.4 µm wyrażona w zliczeniach/cm^3^
+* `temp` - temperatura powietrza [°C]
+* `rh` - wilgotność względna [%]
+* `pres` - ciśnienie na poziomie stacji [hPa]
+* `pres_sea` - ciśnienie nad poziomem morza [hPa]
+* `wd` - kierunek wiatru [°]
+* `mws` - maksymalns prędkość wiatru [m/s]
+* `ws` - prędkość wiatru [m/s]
+* `prec` - opad atmosferyczny [mm/h]
 
 ```{r}
-load("dane/ops.RData") ; ops <- ops |> na.omit()
+ops |> is.na() |> colSums()
+```
+
+W zbiorze można zaobserwować liczne braki danych, które należy wyeliminować przed dalszą analizą.
+
+```{r}
+ops <- ops |> 
+  mutate(across(where(is.numeric), ~ifelse(is.na(.), median(., na.rm = TRUE), .)))
+
+ops |> is.na() |> sum()
+```
+
+Wszystkie braki danych zostały zamienione na mediane z wartości kolumny. Brak danych jakościowych umożliwia wykonanie operacji dla wszystkich atrybutów.
+
+```{r}
+ops |> summary()
+```
+
+
+Powyżej przedstawiono podsumowanie wszystkich atrybutów zbioru danych.
+
+## Zbiór weryfikacyjny i przygotowanie danych do analizy
+
+Dane w zbiorze weryfikacyjnym zawierają analogiczne informacje w stosunku do zestawu danych `ops`, ale pomiary zostały wykonane w innym czasie i miejscu. Ponadto zastosowano inną metodę referencyjną pomiaru stężeń PM10 tj. BAM 1020 Met One Instruments zamiast GRIMM EDM 180.
+
+Załadowanie danych weryfikacyjnych.
+
+```{r}
 load("dane/data_test.rdata")
 ```
 
+Podgląd danych:
+
+```{r}
+ops_data |> glimpse()
+```
+Do analizy zostsną wykorzystane dane od `date` do `prec`, połaczone z danymi ramki danych `bam`.
+
+```{r}
+bam |> tail(5)
+```
+Dane będą połączone przy pomocy zmiennej `date` zapobiegając problemowi różnej ilości obserwacji.
+
+Przygotowanie dany:
+
 ```{r}
 weryfikacja <- ops_data |> select(date:prec)
+
 weryfikacja <- weryfikacja |> 
   left_join(bam, by = "date") |> 
   mutate(grimm_pm10 = bam_pm10) |> 
   select(-bam_pm10)
+
+ops_pm10 <- ops
+
 ops <- ops |> select(-ops_pm10, -pres_sea)
 
 nazwy <- colnames(ops) |> dput()
@@ -60,3 +149,159 @@ weryfikacja <- weryfikacja |>
 
 colnames(weryfikacja) == colnames(ops)
 ```
+Poniżej wszystkie aktrybuty danych weryfikacyjnych już z podmienioną kolumną `grimm_pm10` na dane pochodzące z czujnika BAM 1020.
+
+Usunieto dodatkowo braki danych znajdujące się w zbiorze.
+
+```{r}
+weryfikacja <- weryfikacja |> na.omit()
+
+weryfikacja |> glimpse()
+```
+
+# Eskploatacyjna analiza danych
+
+Porównanie wyników pomiarowych stężeń PM_10_ wykonanych przy zastowaniu dwóch podobnych metod pomiarowych:
+
+* **TSI OPS 3330** - metoda optyczna nie uznawana za równoważną do referencyjnej
+* **GRIMM EDM180** - metoda optyczna równoważna do referencyjnej (kalibrowana na podstawie danych referencyjnych w lokalizacji wykonywania pomiarów)
+
+```{r}
+ops_pm10 |> na.omit() |> 
+  ggplot(mapping = aes(x = grimm_pm10, 
+                       y = ops_pm10)) + 
+  geom_point(shape = 16, alpha = 0.3) +
+  geom_abline(slope = c(0.5, 2, 1), 
+              col = c( "blue4", "blue4", "red4"), size = 0.8) +
+  geom_smooth(method = lm, color = "green4") +
+  theme_bw() +
+  scale_x_continuous(expand = c(0,0), limits = c(0, 170)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0, 170)) + 
+  labs(title = "Porównanie metod pomiarowych stężeń PM10", 
+       y = "TSI OPS 3330", 
+       x = "GRIMM EDM 180") +
+  coord_equal()
+
+remove(ops_pm10)
+```
+Zaobserwowano, że dane z OPS są mocno niedoszacowane względem metody równoważnej do referencyjnej (około 2 krotnie).
+
+## Szereg czasowy danych
+
+```{r}
+ops |> 
+  ggplot(aes(x = date, y = grimm_pm10)) +
+  geom_line(color = "steelblue") +
+  theme_bw() +
+  labs(title = "Szereg czasowy PM10 GRIMM",
+       x = "Data",
+       y = "PM10 [µg/m^3^]")
+```
+
+W szeregu czasowym można zauważyć znaczną zmienność poziomu stężenia pyłu zawieszonego. Dane wykazują także wyraźny charakter cykliczny, w niektórych dniach obserwuje się zauważalne spadki stężenia w porównaniu z okresami, w których jego poziom jest najwyższy.
+
+## PM10 vs dni tygodnia
+
+Dodanie rozróżnienia w dniach tygodnia
+
+```{r}
+ops <- 
+  ops |> 
+  janitor::clean_names() |> 
+  mutate(jday = lubridate::yday(date)) |> 
+  mutate(
+    wday = lubridate::wday(x = date, abbr = T, label = T),
+    hour = lubridate::hour(x = date),
+    day_work = case_when(
+      wday == "Mon" ~ "week",
+      wday == "Tue" ~ "week",
+      wday == "Wed" ~ "week",
+      wday == "Thu" ~ "week",
+      wday == "Fri" ~ "week",
+      wday == "Sat" ~ "weekend",
+      wday == "Sun" ~ "weekend"
+    )
+  ) |> 
+  mutate(day_work = as.factor(day_work))
+```
+
+Wykres pokazujący średnie wartości stężenia PM10 w danym dniu tygodnia.
+
+```{r}
+ops |>
+  group_by(wday) |>
+  summarise(mean_pm10 = mean(grimm_pm10, na.rm = TRUE)) |>
+  ggplot(aes(x = wday, y = mean_pm10, fill = wday)) +
+  geom_col(width = 0.7) +
+  scale_fill_viridis_d(option = "D") +
+  labs(title = "Średnie tygodniowe wartości PM10 (GRIMM)",
+      x = "Dzień tygodnia",
+      y = "Średnie PM10 GRIMM",
+      fill = "Dzień tygodnia") +
+  theme_bw() +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold"))
+```
+
+Wyraźnie widać spadek stężnież w weekend i środę. Duży wzrost przypada na poniedziałek z tendencją spadkową w kolejne dni.
+
+## Wizualizacja zliczeń w czasie
+
+Przedstawienie danych, które zostaną użyte w modelach ml.
+
+```{r}
+ops |> 
+  select(date, starts_with("n_0")) |> 
+  pivot_longer(cols = starts_with("n_0"),
+               names_to = "particle_size",
+               values_to = "count") |> 
+  mutate(particle_size = factor(particle_size,
+                                levels = c("n_0044", "n_0075", "n_0100",
+                                           "n_0120", "n_0140", "n_0200",
+                                           "n_0250", "n_0500", "n_0750",
+                                           "n_1000"))) |> 
+  ggplot(aes(x = date, y = particle_size, fill = count)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "magma", trans = "log10") +
+  labs(title = "Zmienność zliczeń cząstek w czasie (n_0044 – n_1000)",
+       x = "Data",
+       y = "Rozmiar cząstek",
+       fill = "Liczność [log10]") +
+  theme_bw()+
+  theme(axis.text.y = element_text(size = 9), 
+        plot.title = element_text(face = "bold"))
+```
+
+Największą ilością charakteryzują się najmniesze cząstki, im większa średnica tym ilość zliczeń jest mniejsza.
+
+## Korelacje między zmiennymi
+
+```{r, fig.width=12, fig.height=12}
+ops |> 
+  select(grimm_pm10, temp, rh, pres, wd, mws, ws) |> 
+  ggpairs() + 
+  theme(axis.text = element_text(size = 8),
+        strip.text = element_text(size =10))
+  
+```
+
+Patrząc na korelacje pomiędzy danymi z urządzenia referencyjnego, a warunkami pomiaru można zauważyć dużą korelację prędkości wiatru i stężenia cząstek. Wartości koralacji nie są tak duże by wymagały usunięcia z analizy.
+
+# Podział danych
+
+```{r}
+set.seed(423)
+
+data_split <- initial_validation_split(data = ops)
+
+ops_train <- training(data_split)
+ops_test <- testing(data_split)
+ops_valid <- validation_set(data_split)
+
+save(data_split, ops_train, ops_test, ops_valid, weryfikacja, file = "spliting_ops.Rdata")
+```
+
+Dane zostały podzielone na odpowiednie grupy w celu wukonanie modeli uczenia maszynowego.
+Jako zbiór weryfikacyjny `weryfikacja`.
+
+
