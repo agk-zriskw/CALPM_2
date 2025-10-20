@@ -64,8 +64,8 @@ ops |> glimpse()
 Zestaw składa się z 21 zmiennych oraz 909 obserwacji. Objaśnienie każdej z nich:
 
 * `date` - Data (krok 1 godzina)
-* `grimm_pm10` - Średnie 1-godzinne stężenia PM10 zmierzone za pomocą GRIMM EDM 180
-* `ops_pm10` - Średnie 1-godzinne stężenia PM10 zmierzone za pomocą TSI OPS 3330
+* `grimm_pm10` - Średnie 1-godzinne stężenie PM10 zmierzone za pomocą GRIMM EDM 180
+* `ops_pm10` - Średnie 1-godzinne stężenie PM10 zmierzone za pomocą TSI OPS 3330
 * `n_0044` - liczba zliczeń cząstek w od 0.3 do 0.44 µm wyrażona w zliczeniach/cm^3^
 * `n_0075` - liczba zliczeń cząstek w od 0.44 do 0.75 µm wyrażona w zliczeniach/cm^3^
 * `n_0100` - liczba zliczeń cząstek w od 0.75 do 1.00 µm wyrażona w zliczeniach/cm^3^
@@ -78,10 +78,10 @@ Zestaw składa się z 21 zmiennych oraz 909 obserwacji. Objaśnienie każdej z n
 * `n_1000` - liczba zliczeń cząstek w od 7.50 do 10.4 µm wyrażona w zliczeniach/cm^3^
 * `temp` - temperatura powietrza [°C]
 * `rh` - wilgotność względna [%]
-* `pres` - ćiśnienie na poziomie stacji [hPa]
+* `pres` - ciśnienie na poziomie stacji [hPa]
 * `pres_sea` - ciśnienie nad poziomem morza [hPa]
-* `wd` - kierunke wiatru [°]
-* `mws` - maksymlan prędkość wiatru [m/s]
+* `wd` - kierunek wiatru [°]
+* `mws` - maksymalns prędkość wiatru [m/s]
 * `ws` - prędkość wiatru [m/s]
 * `prec` - opad atmosferyczny [mm/h]
 
@@ -89,15 +89,16 @@ Zestaw składa się z 21 zmiennych oraz 909 obserwacji. Objaśnienie każdej z n
 ops |> is.na() |> colSums()
 ```
 
-W zbiorze można zaobserwować liczne braki danych, które należy wyelminować przed dalszą analizą.
+W zbiorze można zaobserwować liczne braki danych, które należy wyeliminować przed dalszą analizą.
 
 ```{r}
-ops <- ops |> na.omit()
+ops <- ops |> 
+  mutate(across(where(is.numeric), ~ifelse(is.na(.), median(., na.rm = TRUE), .)))
 
 ops |> is.na() |> sum()
 ```
 
-Wszystkie braki danych zosatały usunięte.
+Wszystkie braki danych zostały zamienione na mediane z wartości kolumny. Brak danych jakościowych umożliwia wykonanie operacji dla wszystkich atrybutów.
 
 ```{r}
 ops |> summary()
@@ -108,7 +109,7 @@ Powyżej przedstawiono podsumowanie wszystkich atrybutów zbioru danych.
 
 ## Zbiór weryfikacyjny i przygotowanie danych do analizy
 
-Dane w zbiorze weryikacyjnym zawierają analogiczne informacje stosunku do zestawu danych `ops`, ale pomiary zostały wykonane w innym czasie i miejscu. Ponadto zastosowano inną metodę referencyjną pomiaru stężeń PM10 tj. BAM 1020 Met One Instruments zamiast GRIMM EDM 180.
+Dane w zbiorze weryfikacyjnym zawierają analogiczne informacje w stosunku do zestawu danych `ops`, ale pomiary zostały wykonane w innym czasie i miejscu. Ponadto zastosowano inną metodę referencyjną pomiaru stężeń PM10 tj. BAM 1020 Met One Instruments zamiast GRIMM EDM 180.
 
 Załadowanie danych weryfikacyjnych.
 
@@ -121,12 +122,12 @@ Podgląd danych:
 ```{r}
 ops_data |> glimpse()
 ```
-Do analizy zosatną wykorzystane dane od data do prec, połaczone z danymi ramki danych bam.
+Do analizy zostsną wykorzystane dane od `date` do `prec`, połaczone z danymi ramki danych `bam`.
 
 ```{r}
 bam |> tail(5)
 ```
-Dane będą połączone przy pomocy zamiennej `date` zapobiegając problemowi różnej ilości obserwacji.
+Dane będą połączone przy pomocy zmiennej `date` zapobiegając problemowi różnej ilości obserwacji.
 
 Przygotowanie dany:
 
@@ -158,7 +159,7 @@ weryfikacja <- weryfikacja |> na.omit()
 weryfikacja |> glimpse()
 ```
 
-# Eskploratacyjna analiza danych
+# Eskploatacyjna analiza danych
 
 Porównanie wyników pomiarowych stężeń PM_10_ wykonanych przy zastowaniu dwóch podobnych metod pomiarowych:
 
@@ -174,8 +175,8 @@ ops_pm10 |> na.omit() |>
               col = c( "blue4", "blue4", "red4"), size = 0.8) +
   geom_smooth(method = lm, color = "green4") +
   theme_bw() +
-  scale_x_continuous(expand = c(0,0), limits = c(0, 101)) +
-  scale_y_continuous(expand = c(0,0), limits = c(0, 101)) + 
+  scale_x_continuous(expand = c(0,0), limits = c(0, 170)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0, 170)) + 
   labs(title = "Porównanie metod pomiarowych stężeń PM10", 
        y = "TSI OPS 3330", 
        x = "GRIMM EDM 180") +
@@ -197,7 +198,7 @@ ops |>
        y = "PM10 [µg/m^3^]")
 ```
 
-Na szeregu czsowanym można zaobserwować dużą zmienność poziomu stężania pyłu zawioszonego. Widoczna jest również cykliczność danych w pewnych dania stężenie wyraźnie spada w porównaniu z dniami o największych poziomach.
+W szeregu czasowym można zauważyć znaczną zmienność poziomu stężenia pyłu zawieszonego. Dane wykazują także wyraźny charakter cykliczny, w niektórych dniach obserwuje się zauważalne spadki stężenia w porównaniu z okresami, w których jego poziom jest najwyższy.
 
 ## PM10 vs dni tygodnia
 
@@ -242,7 +243,7 @@ ops |>
         plot.title = element_text(face = "bold"))
 ```
 
-Wyraźnie widać spadek stężnież w dni wolne od pracy oraz środę. Duży wzrost przypada na poniedziałek z tendecją spadkową w kolejne dni.
+Wyraźnie widać spadek stężnież w weekend i środę. Duży wzrost przypada na poniedziałek z tendencją spadkową w kolejne dni.
 
 ## Wizualizacja zliczeń w czasie
 
@@ -275,10 +276,13 @@ Największą ilością charakteryzują się najmniesze cząstki, im większa śr
 
 ## Korelacje między zmiennymi
 
-```{r}
+```{r, fig.width=12, fig.height=12}
 ops |> 
   select(grimm_pm10, temp, rh, pres, wd, mws, ws) |> 
-  ggpairs()
+  ggpairs() + 
+  theme(axis.text = element_text(size = 8),
+        strip.text = element_text(size =10))
+  
 ```
 
 Patrząc na korelacje pomiędzy danymi z urządzenia referencyjnego, a warunkami pomiaru można zauważyć dużą korelację prędkości wiatru i stężenia cząstek. Wartości koralacji nie są tak duże by wymagały usunięcia z analizy.
@@ -286,6 +290,8 @@ Patrząc na korelacje pomiędzy danymi z urządzenia referencyjnego, a warunkami
 # Podział danych
 
 ```{r}
+set.seed(423)
+
 data_split <- initial_validation_split(data = ops)
 
 ops_train <- training(data_split)
