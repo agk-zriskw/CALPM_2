@@ -223,6 +223,25 @@ ops <-
     )
   ) |> 
   mutate(day_work = as.factor(day_work))
+
+weryfikacja <-
+  weryfikacja |> 
+  janitor::clean_names() |> 
+  mutate(jday = lubridate::yday(date)) |> 
+  mutate(
+    wday = lubridate::wday(x = date, abbr = T, label = T),
+    hour = lubridate::hour(x = date),
+    day_work = case_when(
+      wday == "Mon" ~ "week",
+      wday == "Tue" ~ "week",
+      wday == "Wed" ~ "week",
+      wday == "Thu" ~ "week",
+      wday == "Fri" ~ "week",
+      wday == "Sat" ~ "weekend",
+      wday == "Sun" ~ "weekend"
+    )
+  ) |> 
+  mutate(day_work = as.factor(day_work))
 ```
 
 Wykres pokazujący średnie wartości stężenia PM10 w danym dniu tygodnia.
@@ -304,4 +323,265 @@ save(data_split, ops_train, ops_test, ops_valid, weryfikacja, file = "spliting_o
 Dane zostały podzielone na odpowiednie grupy w celu wukonanie modeli uczenia maszynowego.
 Jako zbiór weryfikacyjny `weryfikacja`.
 
+# Tworzenie recept
 
+```{r}
+base_recipe <- recipe(grimm_pm10 ~ ., data = ops_train) |>
+  step_rm(date) |>
+  step_mutate(
+    hour_sin = sin(2 * pi * hour / 24),
+    hour_cos = cos(2 * pi * hour / 24)
+  ) |>
+  step_rm(hour) |>
+  step_mutate(
+    wd_sin = sin(wd * pi / 180),
+    wd_cos = cos(wd * pi / 180)
+  ) |>
+  step_rm(wd) |>
+  step_dummy(all_nominal_predictors()) |>
+  step_zv(all_predictors())
+
+
+recipe_linear <- base_recipe |>
+  step_normalize(all_numeric_predictors()) |>
+  step_corr(all_numeric_predictors(), threshold = 0.9)
+
+recipe_tree <- base_recipe
+```
+
+# Definicja modeli
+
+```{r}
+# 1. Linear model
+lm_spec <- linear_reg() |>
+  set_engine("lm")
+
+# 2. Elastic Net (GLMNet)
+glmnet_spec <- linear_reg(
+  penalty = tune(),
+  mixture = tune()
+) |>
+  set_engine("glmnet")
+
+# 3. Random Forest
+rf_spec <- rand_forest(
+  mtry = tune(),
+  trees = tune(),
+  min_n = tune()
+) |>
+  set_engine("ranger", importance = "impurity") |>
+  set_mode("regression")
+
+# 4. XGBoost
+xgb_spec <- boost_tree(
+  trees = tune(),
+  learn_rate = tune(),
+  tree_depth = tune(),
+  loss_reduction = tune(),
+  min_n = tune()
+) |>
+  set_engine("xgboost") |>
+  set_mode("regression")
+```
+
+# Workflowy
+
+```{r}
+lm_wf     <- workflow() |> add_model(lm_spec) |> add_recipe(recipe_linear)
+glmnet_wf <- workflow() |> add_model(glmnet_spec) |> add_recipe(recipe_linear)
+rf_wf     <- workflow() |> add_model(rf_spec) |> add_recipe(recipe_tree)
+xgb_wf    <- workflow() |> add_model(xgb_spec) |> add_recipe(recipe_tree)
+```
+
+# Walidacja i metryki
+
+```{r}
+set.seed(123)
+folds <- vfold_cv(ops_train, v = 5)
+
+custom_metrics <- metric_set(rmse, mae, mape, rsq)
+```
+
+# Siatki parametrów
+
+```{r}
+glmnet_grid <- grid_regular(
+  penalty(range = c(-4, 0)),
+  mixture(range = c(0, 1)),
+  levels = 6
+)
+
+rf_grid <- grid_regular(
+  mtry(range = c(3, 10)),
+  trees(range = c(300, 1000)),
+  min_n(range = c(2, 10)),
+  levels = 4
+)
+
+xgb_grid <- grid_regular(
+  trees(range = c(500, 1500)),
+  learn_rate(range = c(-3, -1)),
+  tree_depth(range = c(2, 8)),
+  loss_reduction(),
+  min_n(),
+  levels = 3
+)
+
+```
+
+```{r}
+save_file <- "model_results.RData"
+
+if (!file.exists(save_file)) {
+  registerDoParallel()
+  
+  # LM (bez tuningu)
+  lm_res <- fit_resamples(
+    lm_wf,
+    resamples = folds,
+    metrics = custom_metrics
+  )
+  
+  # Pozostałe modele z tuningiem
+  glmnet_res <- tune_grid(
+    glmnet_wf,
+    resamples = folds,
+    grid = glmnet_grid,
+    metrics = custom_metrics
+  )
+  
+  rf_res <- tune_grid(
+    rf_wf,
+    resamples = folds,
+    grid = rf_grid,
+    metrics = custom_metrics
+  )
+  
+  xgb_res <- tune_grid(
+    xgb_wf,
+    resamples = folds,
+    grid = xgb_grid,
+    metrics = custom_metrics
+  )
+  
+  # Zapis wyników do pliku .RData
+  save(lm_res, glmnet_res, rf_res, xgb_res, file = save_file)
+  
+  cat("Wyniki zapisane do", save_file, "\n")
+  
+} else {
+  cat("Plik", save_file, "już istnieje. Nie zapisano nowych wyników.\n")
+  load(save_file)
+}
+
+```
+
+# Porównanie wyników
+
+```{r}
+results <- bind_rows(
+  collect_metrics(lm_res) |> mutate(model = "lm"),
+  collect_metrics(glmnet_res) |> mutate(model = "glmnet"),
+  collect_metrics(rf_res) |> mutate(model = "rf"),
+  collect_metrics(xgb_res) |> mutate(model = "xgb")
+)
+
+results_summary <- results |>
+  filter(.metric %in% c("rmse", "mae", "mape", "rsq")) |>
+  group_by(model, .metric) |>
+  summarise(mean = mean(mean), .groups = "drop") |>
+  pivot_wider(names_from = .metric, values_from = mean) |>
+  arrange(rmse)
+
+results_summary
+```
+
+# Wybór najlepszego
+
+```{r}
+# Lista modeli i workflow
+models <- list(
+  lm = lm_wf,
+  glmnet = glmnet_wf,
+  rf = rf_wf,
+  xgb = xgb_wf
+)
+
+# Lista wyników resampling / tuning
+resamples_list <- list(
+  lm = lm_res,       # brak tuningu
+  glmnet = glmnet_res,
+  rf = rf_res,
+  xgb = xgb_res
+)
+
+# Lista do przechowywania finalnych workflow
+final_workflows <- list()
+
+# Funkcja do finalizacji i last_fit
+fit_and_collect <- function(model_name, wf, res) {
+  if (model_name %in% c("lm")) {
+    # brak tuningu, używamy od razu workflow
+    final_wf <- wf
+  } else {
+    # wybór najlepszego zestawu parametrów wg RMSE
+    best_params <- select_best(res, metric = "rmse")
+    final_wf <- finalize_workflow(wf, best_params)
+  }
+  
+  # zapisujemy finalny workflow w liście globalnej
+  final_workflows[[model_name]] <<- final_wf
+  
+  # last_fit na podziale danych
+  final_fit <- last_fit(final_wf, split = data_split, metrics = custom_metrics)
+  
+  # zbierz metryki
+  metrics <- collect_metrics(final_fit) |>
+    mutate(model = model_name)
+  
+  return(metrics)
+}
+
+# Iteracja po wszystkich modelach
+all_metrics <- map2_dfr(models, names(models), ~fit_and_collect(.y, .x, resamples_list[[.y]]))
+
+# Tabela szeroka
+metrics_table <- all_metrics |>
+  select(model, .metric, .estimate) |>
+  pivot_wider(
+    names_from = .metric,
+    values_from = .estimate
+  ) |>
+  arrange(rmse)
+
+# Wyświetlenie wyników
+metrics_table
+```
+
+# Weryfikacja na danych zewnętrznych
+
+```{r}
+final_fitted <- map(final_workflows, ~fit(.x, data = training(data_split)))
+custom_metrics <- metric_set(rmse, mae, rsq, mape)
+
+compute_metrics <- function(model_name, wf) {
+  preds <- predict(wf, new_data = weryfikacja) |>
+    bind_cols(weryfikacja %>% select(grimm_pm10))
+  
+  metrics <- custom_metrics(preds, truth = grimm_pm10, estimate = .pred) |>
+    mutate(model = model_name)
+  
+  return(metrics)
+}
+
+# iteracja po wszystkich modelach
+verification_metrics <- map2_dfr(names(final_fitted), final_fitted, compute_metrics)
+
+# pivot
+metrics_table_verif <- verification_metrics |>
+  select(model, .metric, .estimate) |>
+  pivot_wider(names_from = .metric, values_from = .estimate) |>
+  arrange(rmse)
+
+metrics_table_verif
+```
