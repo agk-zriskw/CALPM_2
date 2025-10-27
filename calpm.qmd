@@ -210,7 +210,7 @@ ops <-
   janitor::clean_names() |> 
   mutate(jday = lubridate::yday(date)) |> 
   mutate(
-    wday = lubridate::wday(x = date, abbr = T, label = T),
+    wday = lubridate::wday(x = date, abbr = T, label = T,locale = "en_US"),
     hour = lubridate::hour(x = date),
     day_work = case_when(
       wday == "Mon" ~ "week",
@@ -229,7 +229,7 @@ weryfikacja <-
   janitor::clean_names() |> 
   mutate(jday = lubridate::yday(date)) |> 
   mutate(
-    wday = lubridate::wday(x = date, abbr = T, label = T),
+    wday = lubridate::wday(x = date, abbr = T, label = T,locale = "en_US"),
     hour = lubridate::hour(x = date),
     day_work = case_when(
       wday == "Mon" ~ "week",
@@ -585,3 +585,264 @@ metrics_table_verif <- verification_metrics |>
 
 metrics_table_verif
 ```
+# Sprawdzenie hiperparametrów
+
+## Random Forest
+
+```{r}
+best_params_rf <- select_best(rf_res, metric = "rmse")
+best_params_rf
+all_fit_metrics_rf <- collect_metrics(rf_res)
+
+all_fit_metrics_rf_sorted <- all_fit_metrics_rf |> 
+  filter(.metric == "rmse") |> 
+  arrange(mean)
+
+all_fit_metrics_rf_sorted %>% head(10)
+```
+
+Można się zastanowić, czy nie wybrać drugiej konfiguracji hiperparametrów, ponieważ różnica między dokładnością modelu jest minimalna, jednak wartości w pierwszym modelu wydają się wystarczające do wybrania go za najlepszy.
+
+## XGBoost
+```{r}
+
+
+best_params_xgb <- select_best(xgb_res, metric = "rmse")
+best_params_xgb
+all_fit_metrics_xgb <- collect_metrics(xgb_res) %>% mutate(model = "xgb")
+
+all_fit_metrics_xgb_sorted <- all_fit_metrics_xgb |> 
+  filter(.metric == "rmse") |> 
+  arrange(mean)
+
+all_fit_metrics_xgb_sorted %>% head(10)
+```
+
+Dla przyspierszenia modelu można wybrać model numer 64, zmniejszający ilość drzew o 500, a zaniżający wyniki rsme tylko o 0,03 względem najlepszego według metryki.
+
+## GLMNET
+```{r}
+best_params_glmnet <- select_best(glmnet_res, metric = "rmse")
+best_params_glmnet
+all_fit_metrics_glmnet <- collect_metrics(glmnet_res)
+
+all_fit_metrics_glmnet_sorted <- all_fit_metrics_glmnet |> 
+  filter(.metric == "rmse") |> 
+  arrange(mean)
+
+all_fit_metrics_glmnet_sorted %>% head(10)
+
+```
+
+Można wykorzystać model 23, żeby hiperparametry były bardziej wyśrodkowane przy znikomej zmianie dokładności modelu.
+
+
+
+# Porównanie RMSE: test vs weryfikacja zewnętrzna
+
+```{r}
+
+test_rmse <- metrics_table %>%
+  select(model, rmse_test = rmse)
+
+verif_rmse <- metrics_table_verif %>%
+  select(model, rmse_verif = rmse)
+
+
+rmse_compare <- test_rmse %>%
+  inner_join(verif_rmse, by = "model") %>%
+  mutate(
+    diff = rmse_verif - rmse_test,
+    ratio = rmse_verif / rmse_test,
+    pct_change = 100 * (rmse_verif - rmse_test) / rmse_test,
+    worse_on_verif = pct_change > 10  
+  ) %>%
+  arrange(desc(pct_change))
+
+print(rmse_compare)
+```
+
+Porównanie RMSE na zbiorze testowym i zewnętrznej weryfikacji pokazuje systematyczne pogorszenie się jakości predykcji dla modeli lm,glmnet i XGBoost (lm: +89.6%, glmnet: +82.2%, xgb: +43.1%). Taki wzrost RMSE jest spowodowany znacznymi różnicami w danych między zbiorem na którym model był uczony a weryfikowany, różnymi metodami pomiarowymi i przystosowaniem do danych testowych.
+Random Forest jest jedynym modelem, który nie pogorszył się (wręcz lekka poprawa: −6.1%), co sugeruje, że modele drzewiaste są bardziej odporne na obserwowane różnice między zbiorami.
+Główną przyczyną pogorszenia wyników najprawdopodobniej jest różnica sensorów (GRIMM vs BAM).
+
+```{r}
+
+
+# GLMNET
+
+best_params_glmnet <- select_best(glmnet_res, metric = "rmse")
+final_glmnet_wf <- finalize_workflow(glmnet_wf, best_params_glmnet)
+
+glmnet_fit <- last_fit(final_glmnet_wf, split = data_split, metrics = custom_metrics)
+glmnet_metrics <- collect_metrics(glmnet_fit) %>% mutate(model = "glmnet")
+
+glmnet_fit |> 
+  extract_workflow() |> 
+  extract_fit_parsnip() |> 
+  vip(num_features = 21) +
+  labs(
+    title = "GLMNET",
+    x = "Predyktory",
+    y = "Ważność"
+  ) +
+  theme_minimal()
+
+
+
+# RANDOM FOREST
+
+best_params_rf <- select_best(rf_res, metric = "rmse")
+final_rf_wf <- finalize_workflow(rf_wf, best_params_rf)
+
+rf_fit <- last_fit(final_rf_wf, split = data_split, metrics = custom_metrics)
+rf_metrics <- collect_metrics(rf_fit) %>% mutate(model = "rf")
+
+rf_fit |> 
+  extract_workflow() |> 
+  extract_fit_parsnip() |> 
+  vip(num_features = 21) +
+  labs(
+    title = "Random Forest",
+    x = "Predyktory",
+    y = "Ważność"
+  ) +
+  theme_minimal()
+
+
+# XGBOOST
+
+best_params_xgb <- select_best(xgb_res, metric = "rmse")
+final_xgb_wf <- finalize_workflow(xgb_wf, best_params_xgb)
+
+xgb_fit <- last_fit(final_xgb_wf, split = data_split, metrics = custom_metrics)
+xgb_metrics <- collect_metrics(xgb_fit) %>% mutate(model = "xgb")
+
+xgb_fit |> 
+  extract_workflow() |> 
+  extract_fit_parsnip() |> 
+  vip(num_features = 21) +
+  labs(
+    title = "XGBoost",
+    x = "Predyktory",
+    y = "Ważność"
+  ) +
+  theme_minimal()
+
+lm_fit <- last_fit(lm_wf, split = data_split, metrics = custom_metrics)
+lm_metrics <- collect_metrics(lm_fit) %>% mutate(model = "lm")
+
+lm_coefs <- lm_fit |>
+  extract_workflow() |>
+  extract_fit_parsnip() |>
+  broom::tidy() |>
+  arrange(desc(abs(estimate)))
+
+try({
+  lm_fit |> 
+    extract_workflow() |> 
+    extract_fit_parsnip() |> 
+    vip(num_features = 21) +
+    labs(
+    title = "LM",
+    x = "Predyktory",
+    y = "Ważność"
+  ) +
+  theme_minimal()
+}, silent = TRUE)
+
+```
+
+Najlepszy rozkład zależności predyktorów od dokładności modelu mają Random Forest i XGBoost, gdzie Random Forest jest lepszy. Pozostałe dwa mają znacznie wyraźniejszy nierówny rozkład wykorzystania predyktorów. Dodatkowo największą zależność od wyniku mają wielkość cząstek oraz prędkość wiatru dla wszystkich modeli.
+
+
+
+# Wykresy predykcji modeli
+```{r}
+
+predictions_all <- map2_dfr(
+  names(final_fitted),
+  final_fitted,
+  ~ predict(.y, new_data = weryfikacja) |>
+    bind_cols(weryfikacja %>% select(date, grimm_pm10)) |>
+    mutate(model = .x)
+)
+
+models_list <- unique(predictions_all$model)
+
+
+plot_scatter_model <- function(model_name) {
+  predictions_all |>
+    filter(model == model_name) |>
+    ggplot(aes(x = grimm_pm10, y = .pred)) +
+    geom_point(color = "#D55E00", alpha = 0.6, size = 2) + 
+    geom_abline(intercept = 0, slope = 1, color = "black", linetype = "dashed", size = 1) +
+    coord_equal() +
+    theme_bw(base_size = 14) +
+    labs(
+      title = paste0("Predykcje vs rzeczywiste wartości PM10 - ", model_name),
+      x = "Rzeczywiste PM10",
+      y = "Predykowane PM10"
+    ) +
+    theme(
+      plot.title = element_text(face = "bold", size = 16),
+      panel.grid.minor = element_blank()
+    )
+}
+
+
+scatter_plots <- map(models_list, plot_scatter_model)
+
+
+scatter_plots[[1]]
+scatter_plots[[2]]
+scatter_plots[[3]]
+scatter_plots[[4]]
+
+
+
+```
+
+Wszystkie predykcje poza Random Forest mają zawyżone wartości względem danych weryfikacyjnych,gdzie Random Forest ma to bardziej rozłożone.
+
+# Najlepszy model
+Najefektywniejszymi modelami są Random Forest i XGBoost, XGBoost miał najlepsze wyniki na zbiorze testowym, jednak pogorszył się bardziej niż Ranger na zbiorze weryfikacyjnym, więc jest mniej odporny na zmiany danych w zbiorze. Z kolei Random Forest miał najgorsze wyniki na zbiorze testowym jednak nie odstawały one znacznie od innych poza XGBoost, ale na zbiorze weryfikacyjnym praktycznie nie stracił na dokładności. Dodatkowo oba mają najlepszy rozkład wykorzystania predyktorów, z wygraną Random Forest.
+Dlatego najlepszym modelem jest Random Forest z konfiguracją hiperparametrów 04.
+
+```{r}
+best_params_rf <- select_best(rf_res, metric = "rmse")
+best_params_rf
+
+metrics_table_verif
+
+final_rf_wf <- finalize_workflow(rf_wf, best_params_rf)
+
+
+
+
+final_rf_fit <- fit(final_rf_wf, data = ops_train)
+
+
+
+
+rf_predictions <- predict(final_rf_fit, new_data = weryfikacja) |>
+bind_cols(weryfikacja %>% select(date, grimm_pm10))
+
+rf_predictions |>
+ggplot(aes(x = grimm_pm10, y = .pred)) +
+geom_point(color = "#0072B2", alpha = 0.6, size = 2) +
+geom_abline(intercept = 0, slope = 1, color = "black", linetype = "dashed", size = 1) +
+coord_equal() +
+theme_bw(base_size = 14) +
+labs(
+title = "Random Forest – Predykcje vs Rzeczywiste PM10",
+x = "Rzeczywiste PM10",
+y = "Predykowane PM10"
+) +
+theme(
+plot.title = element_text(face = "bold", size = 12),
+panel.grid.minor = element_blank()
+)
+```
+
+
