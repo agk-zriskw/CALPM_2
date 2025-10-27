@@ -618,7 +618,7 @@ all_fit_metrics_xgb_sorted <- all_fit_metrics_xgb |>
 all_fit_metrics_xgb_sorted %>% head(10)
 ```
 
-Dla przyspierszenia modelu można wybrać model numer 64, zmniejszający ilość drzew o 500, a zaniżający wyniki rsme tylko o 0,03 względem najlepszego według metryki.
+Dla przyspieszenia modelu można wybrać model numer 64, zmniejszający ilość drzew o 500, a zaniżający wyniki rmse tylko o 0,03 względem najlepszego według metryki.
 
 ## GLMNET
 ```{r}
@@ -667,7 +667,7 @@ Random Forest jest jedynym modelem, który nie pogorszył się (wręcz lekka pop
 Główną przyczyną pogorszenia wyników najprawdopodobniej jest różnica sensorów (GRIMM vs BAM).
 
 ```{r}
-
+set.seed(555)
 
 # GLMNET
 
@@ -793,13 +793,12 @@ plot_scatter_model <- function(model_name) {
 
 scatter_plots <- map(models_list, plot_scatter_model)
 
+for (i in seq_along(scatter_plots))
+{
 
-scatter_plots[[1]]
-scatter_plots[[2]]
-scatter_plots[[3]]
-scatter_plots[[4]]
+  print(scatter_plots[[i]])
 
-
+}
 
 ```
 
@@ -810,6 +809,8 @@ Najefektywniejszymi modelami są Random Forest i XGBoost, XGBoost miał najlepsz
 Dlatego najlepszym modelem jest Random Forest z konfiguracją hiperparametrów 04.
 
 ```{r}
+set.seed(412)
+
 best_params_rf <- select_best(rf_res, metric = "rmse")
 best_params_rf
 
