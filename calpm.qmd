@@ -46,7 +46,6 @@ library(GGally)
 library(openair)
 ```
 
-
 # Dane
 
 Załadowanie danych treningowych.
@@ -63,27 +62,27 @@ ops |> glimpse()
 
 Zestaw składa się z 21 zmiennych oraz 909 obserwacji. Objaśnienie każdej z nich:
 
-* `date` - Data (krok 1 godzina)
-* `grimm_pm10` - Średnie 1-godzinne stężenie PM10 zmierzone za pomocą GRIMM EDM 180
-* `ops_pm10` - Średnie 1-godzinne stężenie PM10 zmierzone za pomocą TSI OPS 3330
-* `n_0044` - liczba zliczeń cząstek w od 0.3 do 0.44 µm wyrażona w zliczeniach/cm^3^
-* `n_0075` - liczba zliczeń cząstek w od 0.44 do 0.75 µm wyrażona w zliczeniach/cm^3^
-* `n_0100` - liczba zliczeń cząstek w od 0.75 do 1.00 µm wyrażona w zliczeniach/cm^3^
-* `n_0120` - liczba zliczeń cząstek w od 1.00 do 1.20 µm wyrażona w zliczeniach/cm^3^
-* `n_0140` - liczba zliczeń cząstek w od 1.20 do 1.40 µm wyrażona w zliczeniach/cm^3^
-* `n_0200` - liczba zliczeń cząstek w od 1.40 do 2.00 µm wyrażona w zliczeniach/cm^3^
-* `n_0250` - liczba zliczeń cząstek w od 2.00 do 2.50 µm wyrażona w zliczeniach/cm^3^
-* `n_0500` - liczba zliczeń cząstek w od 2.50 do 5.00 µm wyrażona w zliczeniach/cm^3^
-* `n_0750` - liczba zliczeń cząstek w od 5.00 do 7.50 µm wyrażona w zliczeniach/cm^3^
-* `n_1000` - liczba zliczeń cząstek w od 7.50 do 10.4 µm wyrażona w zliczeniach/cm^3^
-* `temp` - temperatura powietrza [°C]
-* `rh` - wilgotność względna [%]
-* `pres` - ciśnienie na poziomie stacji [hPa]
-* `pres_sea` - ciśnienie nad poziomem morza [hPa]
-* `wd` - kierunek wiatru [°]
-* `mws` - maksymalns prędkość wiatru [m/s]
-* `ws` - prędkość wiatru [m/s]
-* `prec` - opad atmosferyczny [mm/h]
+-   `date` - Data (krok 1 godzina)
+-   `grimm_pm10` - Średnie 1-godzinne stężenie PM10 zmierzone za pomocą GRIMM EDM 180
+-   `ops_pm10` - Średnie 1-godzinne stężenie PM10 zmierzone za pomocą TSI OPS 3330
+-   `n_0044` - liczba zliczeń cząstek w od 0.3 do 0.44 µm wyrażona w zliczeniach/cm^3^
+-   `n_0075` - liczba zliczeń cząstek w od 0.44 do 0.75 µm wyrażona w zliczeniach/cm^3^
+-   `n_0100` - liczba zliczeń cząstek w od 0.75 do 1.00 µm wyrażona w zliczeniach/cm^3^
+-   `n_0120` - liczba zliczeń cząstek w od 1.00 do 1.20 µm wyrażona w zliczeniach/cm^3^
+-   `n_0140` - liczba zliczeń cząstek w od 1.20 do 1.40 µm wyrażona w zliczeniach/cm^3^
+-   `n_0200` - liczba zliczeń cząstek w od 1.40 do 2.00 µm wyrażona w zliczeniach/cm^3^
+-   `n_0250` - liczba zliczeń cząstek w od 2.00 do 2.50 µm wyrażona w zliczeniach/cm^3^
+-   `n_0500` - liczba zliczeń cząstek w od 2.50 do 5.00 µm wyrażona w zliczeniach/cm^3^
+-   `n_0750` - liczba zliczeń cząstek w od 5.00 do 7.50 µm wyrażona w zliczeniach/cm^3^
+-   `n_1000` - liczba zliczeń cząstek w od 7.50 do 10.4 µm wyrażona w zliczeniach/cm^3^
+-   `temp` - temperatura powietrza \[°C\]
+-   `rh` - wilgotność względna \[%\]
+-   `pres` - ciśnienie na poziomie stacji \[hPa\]
+-   `pres_sea` - ciśnienie nad poziomem morza \[hPa\]
+-   `wd` - kierunek wiatru \[°\]
+-   `mws` - maksymalns prędkość wiatru \[m/s\]
+-   `ws` - prędkość wiatru \[m/s\]
+-   `prec` - opad atmosferyczny \[mm/h\]
 
 ```{r}
 ops |> is.na() |> colSums()
@@ -104,7 +103,6 @@ Wszystkie braki danych zostały zamienione na mediane z wartości kolumny. Brak 
 ops |> summary()
 ```
 
-
 Powyżej przedstawiono podsumowanie wszystkich atrybutów zbioru danych.
 
 ## Zbiór weryfikacyjny i przygotowanie danych do analizy
@@ -122,11 +120,13 @@ Podgląd danych:
 ```{r}
 ops_data |> glimpse()
 ```
+
 Do analizy zostsną wykorzystane dane od `date` do `prec`, połaczone z danymi ramki danych `bam`.
 
 ```{r}
 bam |> tail(5)
 ```
+
 Dane będą połączone przy pomocy zmiennej `date` zapobiegając problemowi różnej ilości obserwacji.
 
 Przygotowanie dany:
@@ -149,6 +149,7 @@ weryfikacja <- weryfikacja |>
 
 colnames(weryfikacja) == colnames(ops)
 ```
+
 Poniżej wszystkie aktrybuty danych weryfikacyjnych już z podmienioną kolumną `grimm_pm10` na dane pochodzące z czujnika BAM 1020.
 
 Usunieto dodatkowo braki danych znajdujące się w zbiorze.
@@ -161,10 +162,10 @@ weryfikacja |> glimpse()
 
 # Eskploatacyjna analiza danych
 
-Porównanie wyników pomiarowych stężeń PM_10_ wykonanych przy zastowaniu dwóch podobnych metod pomiarowych:
+Porównanie wyników pomiarowych stężeń PM_10\_ wykonanych przy zastowaniu dwóch podobnych metod pomiarowych:
 
-* **TSI OPS 3330** - metoda optyczna nie uznawana za równoważną do referencyjnej
-* **GRIMM EDM180** - metoda optyczna równoważna do referencyjnej (kalibrowana na podstawie danych referencyjnych w lokalizacji wykonywania pomiarów)
+-   **TSI OPS 3330** - metoda optyczna nie uznawana za równoważną do referencyjnej
+-   **GRIMM EDM180** - metoda optyczna równoważna do referencyjnej (kalibrowana na podstawie danych referencyjnych w lokalizacji wykonywania pomiarów)
 
 ```{r}
 ops_pm10 |> na.omit() |> 
@@ -184,6 +185,7 @@ ops_pm10 |> na.omit() |>
 
 remove(ops_pm10)
 ```
+
 Zaobserwowano, że dane z OPS są mocno niedoszacowane względem metody równoważnej do referencyjnej (około 2 krotnie).
 
 ## Szereg czasowy danych
@@ -213,13 +215,8 @@ ops <-
     wday = lubridate::wday(x = date, abbr = T, label = T),
     hour = lubridate::hour(x = date),
     day_work = case_when(
-      wday == "Mon" ~ "week",
-      wday == "Tue" ~ "week",
-      wday == "Wed" ~ "week",
-      wday == "Thu" ~ "week",
-      wday == "Fri" ~ "week",
-      wday == "Sat" ~ "weekend",
-      wday == "Sun" ~ "weekend"
+      wday %in% c("Mon", "Tue", "Wed", "Thu", "Fri") ~ "week",
+      wday %in% c("Sat", "Sun") ~ "weekend"
     )
   ) |> 
   mutate(day_work = as.factor(day_work))
@@ -232,13 +229,8 @@ weryfikacja <-
     wday = lubridate::wday(x = date, abbr = T, label = T),
     hour = lubridate::hour(x = date),
     day_work = case_when(
-      wday == "Mon" ~ "week",
-      wday == "Tue" ~ "week",
-      wday == "Wed" ~ "week",
-      wday == "Thu" ~ "week",
-      wday == "Fri" ~ "week",
-      wday == "Sat" ~ "weekend",
-      wday == "Sun" ~ "weekend"
+      wday %in% c("Mon", "Tue", "Wed", "Thu", "Fri") ~ "week",
+      wday %in% c("Sat", "Sun") ~ "weekend"
     )
   ) |> 
   mutate(day_work = as.factor(day_work))
@@ -320,8 +312,7 @@ ops_valid <- validation_set(data_split)
 save(data_split, ops_train, ops_test, ops_valid, weryfikacja, file = "spliting_ops.Rdata")
 ```
 
-Dane zostały podzielone na odpowiednie grupy w celu wukonanie modeli uczenia maszynowego.
-Jako zbiór weryfikacyjny `weryfikacja`.
+Dane zostały podzielone na odpowiednie grupy w celu wukonanie modeli uczenia maszynowego. Jako zbiór weryfikacyjny `weryfikacja`.
 
 # Tworzenie recept
 
@@ -384,7 +375,7 @@ xgb_spec <- boost_tree(
   set_mode("regression")
 ```
 
-# Workflowy
+# Workflow modeli
 
 ```{r}
 lm_wf     <- workflow() |> add_model(lm_spec) |> add_recipe(recipe_linear)
