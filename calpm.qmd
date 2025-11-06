@@ -329,6 +329,8 @@ base_recipe <- recipe(grimm_pm10 ~ ., data = ops_train) |>
     wd_cos = cos(wd * pi / 180)
   ) |>
   step_rm(wd) |>
+  step_unknown(day_work) |> 
+  step_zv(all_predictors()) |>
   step_dummy(all_nominal_predictors()) |>
   step_zv(all_predictors())
 
